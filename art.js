@@ -106,11 +106,11 @@ function Art(canvas, ranges) {
         }
 
     }
+
     this.keyPress = function(key) {
-        console.log("TODO", key);
         switch (key) {
             case 0:
-            this.addShape(x,y);
+                this.addShape();
                 break;
             case 1:
                 this.fillModeIndex = (this.fillModeIndex + 1) % this.fillModes.length;
@@ -160,7 +160,7 @@ function Art(canvas, ranges) {
                 this.reset();
                 break;
             default:
-                console.log("TODO!", key);
+            console.log("Key not supported", key);
         }
         if (this.shapes.length == 0 && key != 11) {
             this.colorIndex = key;

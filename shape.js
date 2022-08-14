@@ -17,7 +17,6 @@ function Shape({
     this.b = floor(random(2, 6));
     this.default_shape_kind = default_shape;
     this.range = range;
-    console.log("new shape", this.a , this.b);
 
     this.drawColors = function(fillMode, frequencies) {
         switch (fillMode) {
@@ -91,7 +90,6 @@ function Shape({
             // this is wrong
             return 2 * PI *(this.b - 1);
             break;
-        
         case "rose":
         case "square":
         case "heart":
@@ -122,7 +120,6 @@ function Shape({
         beginShape();
         let radius = this.radius;
         if (amplitude != 0) {
-
             radius = lerp(min_radius, this.radius, amplitude);
         }
         for (let i = 0; i < soundwave.length; i++) {

@@ -1,8 +1,7 @@
 let art;
 let debug = true;
 
-let mic;
-let fft;
+let mic, fft, amplitude;
 let ranges = ["bass", "lowMid", "mid", "highMid", "treble"];
 let frequencies = new Object();
 
@@ -31,14 +30,15 @@ function setup() {
     fft = new p5.FFT(smoothing);
 
     mic.connect(fft);
+    amplitude = new p5.Amplitude();
+    amplitude.setInput(mic);
+    amplitude.toggleNormalize(true);
 
     mic.start();
 }
 
-
-function on_update(update){
+function process_update(data){
     let action = false;
-    data = JSON.parse(update);
     if(data.key !== undefined){
         art.keyPress(data.key);
         action = true;
@@ -56,6 +56,17 @@ function on_update(update){
     }
 }
 
+function on_update(update){
+    data = JSON.parse(update);
+    process_update(data);
+}
+
+function keyPressed(event){
+    if(isFinite(event.key)){
+        art.keyPress(parseInt(event.key));
+    }
+    
+}
 function canvasMouseClicked() {
     art.addShape({x:mouseX, y:mouseY});
 }
@@ -69,15 +80,15 @@ function draw() {
     let spectrum = fft.analyze();
     let soundwave = fft.waveform();
 
-    let amplitude = mic.getLevel();
+    let amplitudeLevel = amplitude.getLevel();
 
     for(let i = 0; i < ranges.length; i++){
         let range = ranges[i];
         frequencies[range] = fft.getEnergy(range);
     }
   
-    art.draw(soundwave, amplitude, frequencies);
-    art.update(amplitude,frequencies);
+    art.draw(soundwave, amplitudeLevel, frequencies);
+    art.update(amplitudeLevel,frequencies);
 }
 
 
