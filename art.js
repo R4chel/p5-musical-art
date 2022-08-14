@@ -12,7 +12,7 @@ function Art(canvas, ranges) {
     this.noise = 5;
     this.fillModeIndex = 0;
     this.shapeModeIndex = 0;
-    this.shapeOverride = random() < 0.5;
+    this.shapeOverride = false;
     this.move = true;
     this.background = color(255);
     this.drawBackground = false;
@@ -86,7 +86,7 @@ function Art(canvas, ranges) {
         this.noise = 5;
         this.fillModeIndex = 0;
         this.shapeModeIndex = 0;
-        this.shapeOverride = random() < 0.5;
+        this.shapeOverride = false;
         this.move = true;
         this.background = color(floor(random(255)));
         this.drawBackground = false;

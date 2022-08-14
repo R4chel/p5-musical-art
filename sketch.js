@@ -59,7 +59,7 @@ function on_update(update){
 function canvasMouseClicked() {
     art.addShape({x:mouseX, y:mouseY});
 }
-let globalMax =0;
+let globalMax = 0;
 
 function draw() {
 
