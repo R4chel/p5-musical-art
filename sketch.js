@@ -30,9 +30,9 @@ function setup() {
     fft = new p5.FFT(smoothing);
 
     mic.connect(fft);
-    amplitude = new p5.Amplitude();
-    amplitude.setInput(mic);
-    amplitude.toggleNormalize(true);
+    // amplitude = new p5.Amplitude();
+    // amplitude.setInput(mic);
+    // amplitude.toggleNormalize(true);
 
     mic.start();
 }
@@ -80,7 +80,8 @@ function draw() {
     let spectrum = fft.analyze();
     let soundwave = fft.waveform();
 
-    let amplitudeLevel = amplitude.getLevel();
+    // let amplitudeLevel = amplitude.getLevel();
+    let amplitudeLevel = mic.getLevel();
 
     for(let i = 0; i < ranges.length; i++){
         let range = ranges[i];
