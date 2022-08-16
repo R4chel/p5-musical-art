@@ -1,12 +1,12 @@
 const NUM_COLOR_MODES = 8;
 
-function Art(canvas, ranges) {
-    this.canvas = canvas;
+function Art(config, ranges) {
+    this.config = config;
     this.fillModes = ["frequency","filled", "noFill", "whiteFill", "randomOpacity", ];
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
-    this.min_radius = floor(max(canvas.width, canvas.height) / 20);
-    this.max_radius = floor(max(canvas.width, canvas.height) / 5);
+    this.min_radius = floor(max(width, height) / 20);
+    this.max_radius = floor(max(width, height) / 5);
     this.colorIndex = 0;
     this.numPoints = 50;
     this.noise = 5;
@@ -30,7 +30,6 @@ function Art(canvas, ranges) {
                 soundwave: soundwave,
                 amplitude: min(amplitude * 100, 1.0),
                 min_radius: this.min_radius,
-                canvas: this.canvas,
                 shapeKind: shapeKind,
                 frequencies: frequencies,
                 rotate : this.rotate,
@@ -42,7 +41,6 @@ function Art(canvas, ranges) {
 
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].update({
-                canvas: this.canvas,
                 move: this.move,
                 frequencies: frequencies,
                 amplitude: min(amplitude * 100, 1.0),
@@ -63,11 +61,11 @@ function Art(canvas, ranges) {
     }
 
     this.addShape = function(point) {
-        let center =point === undefined ? this.canvas.randomPoint() : point;
+        let center =point === undefined ? randomPoint() : point;
         let s =
             new Shape({
                 center: center,
-                radius: floor(random(this.min_radius, this.max_radius + 1)),
+                radius: round(random(this.min_radius, this.max_radius)),
                 color: this.randomColor(),
                 numPoints: this.numPoints,
                 noise: this.noise,
@@ -246,4 +244,8 @@ function weightedChoice(weightedList) {
         totalWeight: totalWeight,
         weightedList: weightedList,
     });
+}
+
+function randomPoint(){
+    return {x : floor(random(width)), y : floor(random(height))};
 }

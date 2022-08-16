@@ -105,7 +105,6 @@ function Shape({
         fillMode,
         soundwave,
         amplitude,
-        canvas,
         min_radius,
         shapeKind,
         frequencies,
@@ -144,7 +143,6 @@ function Shape({
     }
 
     this.update = function({
-        canvas,
         move,
         frequencies,
         amplitude
@@ -160,8 +158,8 @@ function Shape({
 
             let center_x_update = randomGaussian(0, this.noise);
             let center_y_update = randomGaussian(0, this.noise);
-            this.center.x = constrain(center.x + center_x_update, 0, canvas.width);
-            this.center.y = constrain(center.y + center_y_update, 0, canvas.height);
+            this.center.x = constrain(center.x + center_x_update, 0, width);
+            this.center.y = constrain(center.y + center_y_update, 0, height);
             this.thetaOffset += random(-thetaDelta, thetaDelta);
         }
 
