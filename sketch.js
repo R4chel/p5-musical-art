@@ -11,12 +11,14 @@ let canvasSize;
 
 
 function setup() {
-    config = new Config({ seed });
+    config = new Config({
+        seed
+    });
 
     angleMode(RADIANS);
     ellipseMode(RADIUS);
     rectMode(RADIUS);
-    
+
     let canvas = createCanvas(config.canvasWidth, config.canvasHeight);
     canvas.mouseClicked(canvasMouseClicked);
 
@@ -81,13 +83,50 @@ function draw() {
 
     let amplitudeLevel = mic.getLevel();
 
+    let avgSound = soundAnalysis(soundwave);
     for (let i = 0; i < ranges.length; i++) {
         let range = ranges[i];
         frequencies[range] = fft.getEnergy(range);
     }
 
-    art.draw(soundwave, amplitudeLevel, frequencies);
-    art.update(amplitudeLevel, frequencies);
+    art.draw({
+        soundwave: soundwave,
+        amplitude: amplitudeLevel,
+        frequencies: frequencies,
+        avgSound: avgSound
+    });
+    art.update({
+        amplitude: amplitudeLevel,
+        frequencies: frequencies,
+        avgSound: avgSound
+    });
+}
+
+let peaks;
+let avgs = [];
+let windowSize = 40;
+
+function soundAnalysis(soundwave) {
+    let sampleMin = 0;
+    let sampleMax = 0;
+    let sampleSum = 0;
+    for (let i = 0; i < soundwave.length; i++) {
+        let value = soundwave[i];
+        sampleMin = min(sampleMin, value);
+        sampleMax = max(sampleMax, value);
+        sampleSum += abs(value);
+    }
+    let sampleAvg = 2 * sampleSum / soundwave.length;
+    let range = sampleMax - sampleMin;
+
+    avgs.push(sampleAvg);
+    while (avgs.length > windowSize) {
+        avgs.shift();
+    }
+    let runningAvg = avgs.reduce((acc, x) => acc + x, 0) / avgs.length;
+
+
+    return runningAvg;
 }
 
 // This is a fix for chrome:

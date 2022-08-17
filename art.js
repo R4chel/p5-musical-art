@@ -19,15 +19,16 @@ function Art(config, ranges) {
     this.ranges = ranges;
     this.rotate = true;
 
-    this.draw = function(soundwave, amplitude) {
+    this.draw = function({soundwave, amplitude, avgSound}) {
         if (this.drawBackground) {
             background(this.background);
         }
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
+        let normalizedSound = soundwave.map(x => x / avgSound);
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].draw({
                 fillMode: this.fillModes[this.fillModeIndex],
-                soundwave: soundwave,
+                soundwave: normalizedSound,
                 amplitude: min(amplitude * 100, 1.0),
                 min_radius: this.min_radius,
                 shapeKind: shapeKind,
@@ -37,7 +38,7 @@ function Art(config, ranges) {
         }
     }
 
-    this.update = function(amplitude, frequencies) {
+    this.update = function({amplitude, frequencies, avgSound}) {
 
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].update({
