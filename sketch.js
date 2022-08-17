@@ -101,7 +101,7 @@ function draw() {
         frequencies[range] = fft.getEnergy(range);
     }
 
-    background(map(1 / pow((millis() - beat) / 1000 + 1, 3), 1, 0, 255, 100));
+    // background(map(1 / pow((millis() - beat) / 1000 + 1, 3), 1, 0, 255, 100));
     drawSpectrumGraph(0, 0, width, height); 
 
     art.draw(soundwave, amplitudeLevel, frequencies);
@@ -109,7 +109,7 @@ function draw() {
 }
 
 // https: //stackoverflow.com/questions/67726950/how-do-i-animate-this-image-to-match-with-a-bpm-in-p5-js
-let avgWindow = 20
+let avgWindow = 20;
 let i = 0;                      // 
 function drawSpectrumGraph(left, top, w, h) {
 
@@ -119,8 +119,6 @@ function drawSpectrumGraph(left, top, w, h) {
     fill('darkgreen');
     strokeWeight(1);
 
-    beginShape();
-    vertex(left, top + h);
 
     let peak = 0;
     // compute a running average of values to avoid very
@@ -150,12 +148,11 @@ function drawSpectrumGraph(left, top, w, h) {
     // any time there is a sudden increase in peak energy, call that a beat
     if (peak > lastPeak * (1 + config.threshold)) {
         print(`tick ${++i}`);
+        circle(i, peak, 100);
         beat = millis();
     }
     lastPeak = peak;
 
-    vertex(left + w, top + h);
-    endShape(CLOSE);
     // this is the range of frequencies covered by the FFT
     let nyquist = 22050;
 
@@ -168,7 +165,7 @@ function drawSpectrumGraph(left, top, w, h) {
     stroke('red');
     // convert index to x value using a logarithmic x axis
     let cx = map(log(mean_freq_index), 0, log(spectrum.length), 0, width);
-    line(cx, 0, cx, h);
+    circle(cx, i*20, 5);
 }
 
 // This is a fix for chrome:
