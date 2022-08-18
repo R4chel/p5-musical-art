@@ -18,13 +18,15 @@ function Art(config, ranges) {
     this.drawBackground = false;
     this.ranges = ranges;
     this.rotate = true;
+    this.maxes = [];
 
     this.draw = function({soundwave, amplitude, avgSound}) {
         if (this.drawBackground) {
             background(this.background);
         }
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
-        let normalizedSound = soundwave.map(x => x / avgSound);
+        let normalizedSound = soundwave.map((x) => x / avgSound);
+        this.maxes.push(max(normalizedSound));
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].draw({
                 fillMode: this.fillModes[this.fillModeIndex],
@@ -45,7 +47,6 @@ function Art(config, ranges) {
                 move: this.move,
                 frequencies: frequencies,
                 amplitude: min(amplitude * 100, 1.0),
-
             });
         }
 
