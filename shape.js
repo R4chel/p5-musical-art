@@ -14,16 +14,16 @@ function Shape({
     this.color = color;
     this.noise = noise;
     this.thetaOffset = random(0, 2 * PI);
-    this.a = floor(random(3,8));
+    this.a = floor(random(3, 8));
     this.b = floor(random(2, 6));
     this.default_shape_kind = default_shape;
     this.range = range;
-    this.waveMultiplier = floor(random(1,6));
-    
+    this.waveMultiplier = floor(random(1, 6));
+
     this.drawColors = function(fillMode, frequencies) {
         switch (fillMode) {
             case "noFill":
-            noFill();
+                noFill();
                 break;
             case "filled":
                 fill(toColor(this.color));
@@ -56,13 +56,13 @@ function Shape({
 
     this.rByShape = function(shapeKind, r, theta) {
         switch (shapeKind) {
-        case "star":
-            return r + this.a*sin(this.b * 2 * theta + PI / 2) ;
-            break;
-            
+            case "star":
+                return r + this.a * sin(this.b * 2 * theta + PI / 2);
+                break;
+
             case "inverseRose":
-            // this is wrong
-            return r * sin((this.b )  * theta/( this.b - 1 ));
+                // this is wrong
+                return r * sin((this.b) * theta / (this.b - 1));
                 break;
             case "rose":
                 return r * sin(this.b * theta);
@@ -86,19 +86,19 @@ function Shape({
 
     this.period = function(shapeKind) {
         switch (shapeKind) {
-        case "spiral":
-            return 2 * PI;
-        case "inverseRose":
-            // this is wrong
-            return 2 * PI *(this.b - 1);
-            break;
-        case "rose":
-        case "square":
-        case "heart":
-        case "circle":
-        default:
-            return 2 * PI;
-            break;
+            case "spiral":
+                return 2 * PI;
+            case "inverseRose":
+                // this is wrong
+                return 2 * PI * (this.b - 1);
+                break;
+            case "rose":
+            case "square":
+            case "heart":
+            case "circle":
+            default:
+                return 2 * PI;
+                break;
 
         }
     }
@@ -127,7 +127,7 @@ function Shape({
             let theta = i * period / soundwave.length;
             // let r = map(soundwave[i], -1, 1, 5, radius );
             let r = radius + soundwave[i] * this.waveMultiplier;
-            let rotatedTheta = rotate ? theta + this.thetaOffset : theta; 
+            let rotatedTheta = rotate ? theta + this.thetaOffset : theta;
             r = this.rByShape(shapeKind, r, rotatedTheta);
             let x = cos(theta) * (r) + this.center.x;
             let y = sin(theta) * (r) + this.center.y;
@@ -135,12 +135,12 @@ function Shape({
         }
 
         switch (shapeKind) {
-        case "spiral":
-            endShape();
-            break;
-        default:
-            endShape(CLOSE);
-            break;
+            case "spiral":
+                endShape();
+                break;
+            default:
+                endShape(CLOSE);
+                break;
         }
 
     }
