@@ -6,6 +6,7 @@ function Shape({
     color,
     default_shape,
     range,
+    multiplier,
 
 }) {
     this.center = center;
@@ -17,7 +18,8 @@ function Shape({
     this.b = floor(random(2, 6));
     this.default_shape_kind = default_shape;
     this.range = range;
-
+    this.waveMultiplier = floor(random(1,6));
+    
     this.drawColors = function(fillMode, frequencies) {
         switch (fillMode) {
             case "noFill":
@@ -119,11 +121,12 @@ function Shape({
         beginShape();
         let radius = this.radius;
         if (amplitude != 0) {
-            radius = lerp(min_radius, this.radius, amplitude);
+            radius = lerp(min_radius, this.radius * 2, amplitude);
         }
         for (let i = 0; i < soundwave.length; i++) {
             let theta = i * period / soundwave.length;
-            let r = map(soundwave[i], -1, 1, 0, radius * 2);
+            // let r = map(soundwave[i], -1, 1, 5, radius );
+            let r = radius + soundwave[i] * this.waveMultiplier;
             let rotatedTheta = rotate ? theta + this.thetaOffset : theta; 
             r = this.rByShape(shapeKind, r, rotatedTheta);
             let x = cos(theta) * (r) + this.center.x;

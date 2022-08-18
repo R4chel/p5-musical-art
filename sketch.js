@@ -95,6 +95,7 @@ function draw() {
         frequencies: frequencies,
         avgSound: avgSound
     });
+
     art.update({
         amplitude: amplitudeLevel,
         frequencies: frequencies,
@@ -104,7 +105,7 @@ function draw() {
 
 let peaks;
 let avgs = [];
-let windowSize = 40;
+let windowSize = 5;
 
 function soundAnalysis(soundwave) {
     let sampleMin = 0;
@@ -119,7 +120,7 @@ function soundAnalysis(soundwave) {
     let sampleAvg = 2 * sampleSum / soundwave.length;
     let range = sampleMax - sampleMin;
 
-    avgs.push(sampleAvg);
+    avgs.push(range);
     while (avgs.length > windowSize) {
         avgs.shift();
     }
