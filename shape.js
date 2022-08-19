@@ -111,8 +111,6 @@ function Shape({
         shapeKind,
         frequencies,
         rotate
-
-
     }) {
         shapeKind = shapeKind === undefined ? this.default_shape_kind : shapeKind;
         let period = this.period(shapeKind);
@@ -125,8 +123,9 @@ function Shape({
         }
         for (let i = 0; i < soundwave.length; i++) {
             let theta = i * period / soundwave.length;
-            // let r = map(soundwave[i], -1, 1, 0, radius * 2);
-            let r = radius + soundwave[i] * this.waveMultiplier;
+            
+            let r = map(soundwave[i], 0, 1, radius, radius * 4/5);
+            // let r = radius + soundwave[i] * this.waveMultiplier;
             let rotatedTheta = rotate ? theta + this.thetaOffset : theta;
             r = this.rByShape(shapeKind, r, rotatedTheta);
             let x = cos(theta) * (r) + this.center.x;
