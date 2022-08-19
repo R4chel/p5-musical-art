@@ -7,10 +7,12 @@ let frequencies = new Object();
 let nonZeroAmplitude = false;
 
 let seed;
-// seed = 0;
+seed = 0;
 let canvasSize;
 // canvasSize = 1000;
 let calibration = [];
+
+let configurable = true;
 
 function setup() {
     config = new Config({
@@ -24,14 +26,19 @@ function setup() {
     let canvas = createCanvas(config.canvasWidth, config.canvasHeight);
     canvas.mouseClicked(canvasMouseClicked);
 
-
     art = new Art(config, ranges);
     art.reset();
+
+    if (configurable) {
+
+        makeSlider("timeWindow", 1, 100, 5, config.getTimeWindow, config.setTimeWindow);
+    }
 
     mic = new p5.AudioIn();
     fft = new p5.FFT();
     mic.connect(fft);
     mic.start();
+
 }
 
 function process_update(data) {
@@ -83,8 +90,6 @@ function draw() {
         nonZeroAmplitude = true;
     }
 
-
-
     let avgSound = soundAnalysis(soundwave);
 
     // this is because currently mic.getLevel() doesn't work in safari
@@ -110,6 +115,7 @@ function draw() {
             console.log("2", ratio2.toFixed(3));
         }
     }
+
     art.draw({
         soundwave: soundwave,
         amplitude: amplitudeLevel,
@@ -163,7 +169,7 @@ function soundAnalysis(soundwave) {
 function rootMeanSquare(data) {
     return Math.sqrt(
         data.reduce(function(acc, x) {
-            return (acc + x * x)
+            return (acc + x * x);
         }, 0) / data.length);
 }
 // This is a fix for chrome:
@@ -172,4 +178,29 @@ function touchStarted() {
     if (getAudioContext().state !== 'running') {
         getAudioContext().resume();
     }
+}
+
+function makeSlider(name, minimum, maximum, delta, getter, setter) {
+    let d = createDiv();
+
+    let label = createElement("label");
+    let textBox = createInput((getter.apply(config)).toString(), "number");
+    textBox.style("width", "100px");
+    textBox.attribute("step", delta);
+    let slider = createSlider(minimum, maximum, getter.apply(config), delta);
+    label.html(name);
+    label.attribute("for", slider.id());
+    slider.input(function() {
+        setter.apply(config, [slider.value()]);
+        textBox.value(slider.value());
+    });
+    textBox.input(function() {
+        let value = parseFloat(textBox.value());
+        setter.apply(config, [value]);
+        slider.value(value);
+    });
+    d.child(label);
+    d.child(slider);
+    d.child(textBox);
+    return slider;
 }

@@ -21,4 +21,17 @@ function Config({
         randomSeed(this.seed);
     };
 
+
+    this.getTimeWindow = function() {
+        return this.timeWindow;
+    };
+
+    this.setTimeWindow = function(timeWindow) {
+        this.timeWindow = timeWindow;
+    };
+
+    this.init = function(){
+        this.setSeed();
+    };
+    this.init();
 }
