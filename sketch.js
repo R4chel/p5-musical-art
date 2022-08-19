@@ -10,7 +10,7 @@ let seed;
 // seed = 0;
 let canvasSize;
 // canvasSize = 1000;
-
+let calibration = [];
 
 function setup() {
     config = new Config({
@@ -79,16 +79,16 @@ function draw() {
     let soundwave = fft.waveform();
 
     let amplitudeLevel = mic.getLevel();
-    if(amplitudeLevel != 0){
+    if (amplitudeLevel != 0) {
         nonZeroAmplitude = true;
     }
 
-    
-    
+
+
     let avgSound = soundAnalysis(soundwave);
 
     // this is because currently mic.getLevel() doesn't work in safari
-    if(!nonZeroAmplitude){
+    if (!nonZeroAmplitude) {
         amplitudeLevel = latestAmplitude;
     }
     for (let i = 0; i < ranges.length; i++) {
@@ -96,12 +96,26 @@ function draw() {
         frequencies[range] = fft.getEnergy(range);
     }
 
+    if (config.debug) {
+        let callibration = rootMeanSquare(avgs);
+
+        let ratio = amplitudeLevel / callibration;
+        let ratio2 = amplitudeLevel / avgSound;
+        if (ratio > 5 || ratio < .05) {
+
+            console.log("1", ratio.toFixed(3));
+        }
+        if (ratio2 > 6 || ratio2 < .05) {
+
+            console.log("2", ratio2.toFixed(3));
+        }
+    }
     art.draw({
         soundwave: soundwave,
         amplitude: amplitudeLevel,
         frequencies: frequencies,
         avgSound: avgSound,
-        safari : !nonZeroAmplitude,
+        safari: !nonZeroAmplitude,
     });
 
     art.update({
@@ -112,34 +126,45 @@ function draw() {
 }
 
 let avgs = [];
-
+let peaks = [];
 
 function soundAnalysis(soundwave) {
-    let sampleMin = 0;
     let sampleMax = 0;
     let sampleSum = 0;
     for (let i = 0; i < soundwave.length; i++) {
         let value = soundwave[i];
-        sampleMin = min(sampleMin, value);
         sampleMax = max(sampleMax, value);
         sampleSum += value ** 2;
     }
+
     let sampleAvg = Math.sqrt(sampleSum / soundwave.length);
     latestAmplitude = sampleAvg;
     avgs.push(sampleAvg);
-    while (avgs.length > config.timeWindow) {
+    peaks.push(sampleMax);
+    while (avgs.length > config.calibrationWindow) {
         avgs.shift();
+        peaks.shift();
     }
-   
-    let runningAvg = rootMeanSquare(avgs);
+
+    let squares = 0;
+    let count = 0;
+    // There may be an off by one error here
+
+    for (let i = 1; i <= min(avgs.length, config.timeWindow); i++) {
+        squares += avgs[avgs.length - i] * 2;
+        count++;
+    }
+    let runningAvg = Math.sqrt(squares / count);
 
 
     return runningAvg;
 }
 
-function rootMeanSquare(data){
+function rootMeanSquare(data) {
     return Math.sqrt(
-        data.reduce(function(acc,x) {return (acc + x*x)}, 0) / data.length);
+        data.reduce(function(acc, x) {
+            return (acc + x * x)
+        }, 0) / data.length);
 }
 // This is a fix for chrome:
 // https://github.com/processing/p5.js-sound/issues/249
