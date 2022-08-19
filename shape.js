@@ -6,6 +6,7 @@ function Shape({
     color,
     default_shape,
     range,
+    multiplier,
 
 }) {
     this.center = center;
@@ -17,6 +18,7 @@ function Shape({
     this.b = floor(random(2, 6));
     this.default_shape_kind = default_shape;
     this.range = range;
+    this.waveMultiplier = floor(random(1, 6));
 
     this.drawColors = function(fillMode, frequencies) {
         switch (fillMode) {
@@ -48,7 +50,7 @@ function Shape({
         // source : https://pavpanchekha.com/blog/heart-polar-coordinates.html
         // note: looks bad if numPoints < 360
         let r = (Math.sin(t) * Math.sqrt(Math.abs(Math.cos(t)))) / (Math.sin(t) + 7 / 5) - 2 * Math.sin(t) + 2;
-        return r * scale;
+        return r * scale / 2.5;
     }
 
 
@@ -119,11 +121,12 @@ function Shape({
         beginShape();
         let radius = this.radius;
         if (amplitude != 0) {
-            radius = lerp(min_radius, this.radius, amplitude);
+            radius = lerp(min_radius, this.radius * 2, amplitude);
         }
         for (let i = 0; i < soundwave.length; i++) {
             let theta = i * period / soundwave.length;
-            let r = map(soundwave[i], -1, 1, 0, radius * 2);
+            // let r = map(soundwave[i], -1, 1, 0, radius * 2);
+            let r = radius + soundwave[i] * this.waveMultiplier;
             let rotatedTheta = rotate ? theta + this.thetaOffset : theta;
             r = this.rByShape(shapeKind, r, rotatedTheta);
             let x = cos(theta) * (r) + this.center.x;
@@ -140,7 +143,7 @@ function Shape({
                 break;
         }
 
-    }
+    };
 
     this.update = function({
         move,
@@ -154,7 +157,7 @@ function Shape({
 
 
             noise = map(frequency, 0, 255, 0, this.noise * 5);
-            thetaDelta = 2 * PI * frequency / (255 * 2)
+            thetaDelta = 2 * PI * frequency / (255 * 2);
 
             let center_x_update = randomGaussian(0, this.noise);
             let center_y_update = randomGaussian(0, this.noise);
