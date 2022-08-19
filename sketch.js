@@ -4,6 +4,8 @@ let mic, fft, amplitude;
 let ranges = ["bass", "lowMid", "mid", "highMid", "treble"];
 let frequencies = new Object();
 
+let nonZeroAmplitude = false;
+
 let seed;
 // seed = 0;
 let canvasSize;
@@ -26,15 +28,9 @@ function setup() {
     art = new Art(config, ranges);
     art.reset();
 
-    let smoothing = 0.8;
     mic = new p5.AudioIn();
-    fft = new p5.FFT(smoothing);
-
+    fft = new p5.FFT();
     mic.connect(fft);
-    // amplitude = new p5.Amplitude();
-    // amplitude.setInput(mic);
-    // amplitude.toggleNormalize(true);
-
     mic.start();
 }
 
@@ -76,14 +72,25 @@ function canvasMouseClicked() {
     });
 
 }
+let latestAmplitude = 0;
 
 function draw() {
     let spectrum = fft.analyze();
     let soundwave = fft.waveform();
 
     let amplitudeLevel = mic.getLevel();
+    if(amplitudeLevel != 0){
+        nonZeroAmplitude = true;
+    }
 
+    
+    
     let avgSound = soundAnalysis(soundwave);
+
+    // this is because currently mic.getLevel() doesn't work in safari
+    if(!nonZeroAmplitude){
+        amplitudeLevel = latestAmplitude;
+    }
     for (let i = 0; i < ranges.length; i++) {
         let range = ranges[i];
         frequencies[range] = fft.getEnergy(range);
@@ -103,9 +110,8 @@ function draw() {
     });
 }
 
-let peaks;
 let avgs = [];
-let windowSize = 5;
+
 
 function soundAnalysis(soundwave) {
     let sampleMin = 0;
@@ -115,15 +121,15 @@ function soundAnalysis(soundwave) {
         let value = soundwave[i];
         sampleMin = min(sampleMin, value);
         sampleMax = max(sampleMax, value);
-        sampleSum += abs(value);
+        sampleSum += value ** 2;
     }
-    let sampleAvg = 2 * sampleSum / soundwave.length;
-    let range = sampleMax - sampleMin;
-
-    avgs.push(range);
-    while (avgs.length > windowSize) {
+    let sampleAvg = Math.sqrt(sampleSum / soundwave.length);
+    latestAmplitude = sampleAvg;
+    avgs.push(sampleAvg);
+    while (avgs.length > config.timeWindow) {
         avgs.shift();
     }
+   
     let runningAvg = avgs.reduce((acc, x) => acc + x, 0) / avgs.length;
 
 

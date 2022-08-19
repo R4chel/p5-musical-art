@@ -26,6 +26,7 @@ function Art(config, ranges) {
         }
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
         let normalizedSound = soundwave.map((x) => x / avgSound);
+
         this.maxes.push(max(normalizedSound));
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].draw({
