@@ -7,12 +7,12 @@ let frequencies = new Object();
 let nonZeroAmplitude = false;
 
 let seed;
-seed = 0;
+// seed = 0;
 let canvasSize;
 // canvasSize = 1000;
 let calibration = [];
 
-let configurable = true;
+let configurable = false;
 
 function setup() {
     config = new Config({
