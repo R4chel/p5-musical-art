@@ -20,7 +20,7 @@ function Art(config, ranges) {
     this.rotate = true;
     this.maxes = [];
 
-    this.draw = function({soundwave, amplitude, avgSound}) {
+    this.draw = function({soundwave, amplitude, avgSound, safari}) {
         if (this.drawBackground) {
             background(this.background);
         }
@@ -28,11 +28,12 @@ function Art(config, ranges) {
         let normalizedSound = soundwave.map((x) => x / avgSound);
 
         this.maxes.push(max(normalizedSound));
+        let amplitudeModifier = safari ? 10 : 100;
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].draw({
                 fillMode: this.fillModes[this.fillModeIndex],
                 soundwave: normalizedSound,
-                amplitude: min(amplitude * 100, 1.0),
+                amplitude: min(amplitude * amplitudeModifier, 1.0),
                 min_radius: this.min_radius,
                 shapeKind: shapeKind,
                 frequencies: frequencies,

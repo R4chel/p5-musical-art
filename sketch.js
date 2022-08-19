@@ -100,7 +100,8 @@ function draw() {
         soundwave: soundwave,
         amplitude: amplitudeLevel,
         frequencies: frequencies,
-        avgSound: avgSound
+        avgSound: avgSound,
+        safari : !nonZeroAmplitude,
     });
 
     art.update({
