@@ -24,6 +24,9 @@ function Art(config, ranges) {
         if (this.drawBackground) {
             background(this.background);
         }
+        noStroke();
+        fill(color(0,0,0,2));
+        rect(0,0,width,height);
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
         let normalizedSound = soundwave.map((x) => x / avgSound);
 

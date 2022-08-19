@@ -124,7 +124,7 @@ function Shape({
         for (let i = 0; i < soundwave.length; i++) {
             let theta = i * period / soundwave.length;
             
-            let r = map(soundwave[i], 0, 1, radius, radius * 4/5);
+            let r = map(soundwave[i], 0, 1, radius, radius * 5/4);
             // let r = radius + soundwave[i] * this.waveMultiplier;
             let rotatedTheta = rotate ? theta + this.thetaOffset : theta;
             r = this.rByShape(shapeKind, r, rotatedTheta);
