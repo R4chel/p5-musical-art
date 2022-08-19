@@ -131,12 +131,16 @@ function soundAnalysis(soundwave) {
         avgs.shift();
     }
    
-    let runningAvg = avgs.reduce((acc, x) => acc + x, 0) / avgs.length;
+    let runningAvg = rootMeanSquare(avgs);
 
 
     return runningAvg;
 }
 
+function rootMeanSquare(data){
+    return Math.sqrt(
+        data.reduce(function(acc,x) {return (acc + x*x)}, 0) / data.length);
+}
 // This is a fix for chrome:
 // https://github.com/processing/p5.js-sound/issues/249
 function touchStarted() {

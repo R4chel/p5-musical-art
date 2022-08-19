@@ -50,7 +50,7 @@ function Shape({
         // source : https://pavpanchekha.com/blog/heart-polar-coordinates.html
         // note: looks bad if numPoints < 360
         let r = (Math.sin(t) * Math.sqrt(Math.abs(Math.cos(t)))) / (Math.sin(t) + 7 / 5) - 2 * Math.sin(t) + 2;
-        return r * scale;
+        return r * scale / 2.5;
     }
 
 
@@ -157,7 +157,7 @@ function Shape({
 
 
             noise = map(frequency, 0, 255, 0, this.noise * 5);
-            thetaDelta = 2 * PI * frequency / (255 * 2)
+            thetaDelta = 2 * PI * frequency / (255 * 2);
 
             let center_x_update = randomGaussian(0, this.noise);
             let center_y_update = randomGaussian(0, this.noise);
