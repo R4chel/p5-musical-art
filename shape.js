@@ -18,8 +18,9 @@ function Shape({
     this.default_shape_kind = default_shape;
     this.range = range;
     this.waveMultiplier = floor(random(1, 6));
+    // bands should be specified by range
     this.splitBand = new FrequencyBand({minValue: 0.8, maxValue: 1., framesForAction:30});
-    this.dieBand = new FrequencyBand({minValue: 0, maxValue: 0.2, framesForAction:30});
+    this.dieBand = new FrequencyBand({minValue: 0, maxValue: 0.5, framesForAction:30});
     
 
     this.drawColors = function(fillMode, frequencies) {
@@ -166,6 +167,7 @@ function Shape({
         }
 
         if(this.splitBand.update(normalizedFrequency)){
+            console.log(this.range,normalizedFrequency, this.splitBand);
             return "SPLIT";
         }
         if(this.dieBand.update(normalizedFrequency)){

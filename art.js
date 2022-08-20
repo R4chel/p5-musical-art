@@ -25,13 +25,16 @@ function Art(config, ranges) {
         soundwave,
         amplitude,
         avgSound,
+        frequencies,
         safari
     }) {
         if (this.drawBackground) {
             background(this.background);
         }
         noStroke();
-        fill(color(0, 0, 0, 2));
+        
+        fill(color(0, 0, 0, 3));
+        // fill(color(255, 255, 255, 3));
         rect(0, 0, width, height);
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
         let normalizedSound = soundwave.map((x) => x / avgSound);
@@ -67,11 +70,11 @@ function Art(config, ranges) {
             });
             switch (action) {
                 case "DIE":
-                console.log("DIE", this.shapes[i]);
+                console.log("DIE", this.shapes[i].range, frequencies);
                     deadList.push(i);
                     break;
                 case "SPLIT":
-                console.log("SPLIT", this.shapes[i]);
+                console.log("SPLIT", this.shapes[i].range, frequencies);
                     splitList.push(i);
                     break;
                 default:
@@ -102,7 +105,7 @@ function Art(config, ranges) {
                     }
                 }
             };
-            for (let i = deadListIndex; i > 0; i--) {
+            for (let i = deadListIndex; i >= 0; i--) {
                 this.shapes.splice(i, 1);
             }
         }

@@ -7,7 +7,7 @@ function FrequencyBand({
     this.frames = 0;
 
     this.update = function(frequency){
-        if(frequency => this.minValue && frequency <= this.maxValue){
+        if(frequency >= this.minValue && frequency <= this.maxValue){
             this.frames++;
         }
         else{
