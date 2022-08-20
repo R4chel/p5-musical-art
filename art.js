@@ -4,7 +4,7 @@ const MAX_SHAPES_PER_RANGE = 5;
 
 function Art(config, ranges) {
     this.config = config;
-    this.fillModes = ["frequency", "filled", "noFill", "whiteFill", "randomOpacity", ];
+    this.fillModes = ["frequency", "frequencyPalette", "filled", "noFill", "whiteFill", "randomOpacity", ];
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
     this.min_radius = floor(max(width, height) / 20);

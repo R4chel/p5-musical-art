@@ -40,8 +40,12 @@ function Shape({
                 fill(this.color.r, this.color.g, this.color.b, random(255));
                 break;
             case "frequency":
-                fill(frequencies[this.range]);
-                break;
+            fill(frequencies[this.range]);
+            break;
+            case "frequencyPalette":
+            fill(palette(frequencies[this.range]));
+            break;
+
         };
         stroke(toColor(this.color));
     };
@@ -181,4 +185,11 @@ function Shape({
 
 function toColor(x) {
     return color(x.r, x.g, x.b);
+}
+
+function palette(frequency) {
+    let c1 = color("#f5c900");
+    let c2 = color("#FF51EB");
+    let normalized = map(frequency, 0, 255, 0, 1);
+    return lerpColor(c1,c2,normalized);
 }
