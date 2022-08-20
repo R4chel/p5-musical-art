@@ -83,11 +83,11 @@ function Art(config, ranges) {
             });
             switch (action) {
                 case "DIE":
-                    console.log("DIE", this.shapes[i].range, frequencies);
+                    console.log("DIE", this.shapes[i].range, this.shapes[i].dieBand);
                     deadList.push(i);
                     break;
                 case "SPLIT":
-                    console.log("SPLIT", this.shapes[i].range, frequencies);
+                    console.log("SPLIT", this.shapes[i].range, this.shapes[i].split);
                     splitList.push(i);
                     break;
                 default:
@@ -280,9 +280,10 @@ function Art(config, ranges) {
 
                 break;
             case 9:
-                this.colorIndex = (this.colorIndex + 1) % NUM_COLOR_MODES;
+                this.removeShape();
                 break;
             case 10:
+                this.colorIndex = (this.colorIndex + 1) % NUM_COLOR_MODES;
                 this.move = !this.move;
                 break;
             case 11:
