@@ -1,5 +1,6 @@
 const NUM_COLOR_MODES = 8;
-const MAX_NUM_SHAPES = 15;
+const MAX_NUM_SHAPES = 20;
+const MAX_SHAPES_PER_RANGE = 5;
 
 function Art(config, ranges) {
     this.config = config;
@@ -18,6 +19,19 @@ function Art(config, ranges) {
     this.background = color(255);
     this.drawBackground = false;
     this.ranges = ranges;
+    this.frequencyBandsByRanges = Object.fromEntries([...this.ranges].map((range) => [range, {
+        splitBand: new FrequencyBand({
+            minValue: 0.8,
+            maxValue: 1.,
+            framesForAction: 30
+        }),
+        dieBand: new FrequencyBand({
+            minValue: 0,
+            maxValue: 0.01,
+            framesForAction: 150
+        }),
+        count: 0,
+    }]));
     this.rotate = true;
     this.maxes = [];
 
@@ -32,7 +46,7 @@ function Art(config, ranges) {
             background(this.background);
         }
         noStroke();
-        
+
         fill(color(0, 0, 0, 3));
         // fill(color(255, 255, 255, 3));
         rect(0, 0, width, height);
@@ -59,7 +73,6 @@ function Art(config, ranges) {
         frequencies,
         avgSound
     }) {
-
         let deadList = [];
         let splitList = [];
         for (let i = 0; i < this.shapes.length; i++) {
@@ -70,11 +83,11 @@ function Art(config, ranges) {
             });
             switch (action) {
                 case "DIE":
-                console.log("DIE", this.shapes[i].range, frequencies);
+                    console.log("DIE", this.shapes[i].range, frequencies);
                     deadList.push(i);
                     break;
                 case "SPLIT":
-                console.log("SPLIT", this.shapes[i].range, frequencies);
+                    console.log("SPLIT", this.shapes[i].range, frequencies);
                     splitList.push(i);
                     break;
                 default:
@@ -83,21 +96,34 @@ function Art(config, ranges) {
             let newShapes = [];
             let deadListIndex = deadList.length - 1;
             for (let i = 0; i < splitList.length; i++) {
+                
                 if (this.shapes.length - deadListIndex + i <= MAX_NUM_SHAPES) {
                     let s = this.shapes[splitList[i]];
                     // probably wanna make the new center offset from the old center
                     let newShape = new Shape({
-                        center: {x : s.center.x, y: s.center.y},
+                        center: {
+                            x: s.center.x,
+                            y: s.center.y
+                        },
                         radius: constrain(floor(random(.5, 1.5) * s.radius), this.min_radius, this.max_radius),
                         numPoints: s.numPoints,
                         noise: s.noise,
                         default_shape: s.default_shape_kind,
                         range: s.range,
                         color: this.randomColor(),
+                        dieBand : new FrequencyBand({minValue : s.dieBand.minValue, maxValue : s.dieBand.maxValue, framesForAction : s.dieBand.framesForAction}),
+                        splitBand : new FrequencyBand({minValue : s.splitBand.minValue, maxValue : s.splitBand.maxValue, framesForAction : s.splitBand.framesForAction}),
                     });
+                    newShape.dieBand.adjustFrames(true);
+                    newShape.splitBand.adjustFrames(false);
                     s.radius = constrain(floor(random(.5, 1.1) * s.radius), this.min_radius, this.max_radius);
                     s.resetFrequencyBands();
+                    s.dieBand.widden(false);
+                    s.splitBand.narrow(true);
+                    
+
                     if (deadListIndex >= 0) {
+                        this.processDead(this.shapes[deadList[deadListIndex]]);
                         this.shapes[deadList[deadListIndex]] = newShape;
                         deadListIndex--;
                     } else {
@@ -106,25 +132,31 @@ function Art(config, ranges) {
                 }
             };
             for (let i = deadListIndex; i >= 0; i--) {
-                this.shapes.splice(i, 1);
+                let shape = this.shapes.splice(i, 1);
+                this.processDead(shape);
             }
         }
+    };
 
-    }
-
+    this.processDead = function(shape){
+        this.frequencyBandsByRanges[shape.range].count--;
+        this.frequencyBandsByRanges[shape.range].dieBand.narrow();
+    };
     this.encoderSwitch = function(encoder_switch_value) {
         console.log("TODO: encoder switch", encoder_switch_value);
-    }
+    };
 
     this.encoder = function(value) {
         // if (value > -20) {
         //     frameRate(value + 20);
         // }
-    }
+    };
 
-    this.removeShape = function() {
+    this.removeShape = function(i) {
+        i = i === undefined ? Math.floor(Math.random() * this.shapes.length): i;
         if (this.shapes.length > 0) {
-            this.shapes.splice(Math.floor(Math.random() * this.shapes.length), 1);
+           let shape = this.shapes.splice(i , 1);
+            this.frequencyBandsByRanges[shape.range].count--;
         }
     };
 
@@ -134,6 +166,19 @@ function Art(config, ranges) {
         if (this.shapes.length > MAX_NUM_SHAPES) {
             this.removeShape();
         }
+        let chooseableRanges =
+            Object.entries(this.frequencyBandsByRanges).filter(([k,value]) => value.count < MAX_SHAPES_PER_RANGE);
+        if(chooseableRanges.length < 1){
+            console.log("UHOH THERES A WEIRD BUG", this.frequencyBandsByRanges);
+            chooseableRanges = Object.entries(this.frequencyBandsByRanges.entries());
+        }
+       
+        let rangeAndBand = random(chooseableRanges);
+        let range = rangeAndBand[0];
+        let bands= rangeAndBand[1];
+
+        
+
         let center = point === undefined ? randomPoint() : point;
         let s =
             new Shape({
@@ -143,10 +188,13 @@ function Art(config, ranges) {
                 numPoints: this.numPoints,
                 noise: this.noise,
                 default_shape: random(this.shapeModes),
-                range: random(this.ranges)
+                range: range,
+                dieBand : new FrequencyBand({minValue : bands.dieBand.minValue, maxValue : bands.dieBand.maxValue, framesForAction : bands.dieBand.framesForAction}),
+                splitBand : new FrequencyBand({minValue : bands.splitBand.minValue, maxValue : bands.splitBand.maxValue, framesForAction : bands.splitBand.framesForAction}),
             });
         this.shapes.push(s);
-    }
+        this.frequencyBandsByRanges[s.range].count++;
+    };
 
     this.reset = function() {
         this.shapes = [];

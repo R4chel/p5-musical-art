@@ -6,7 +6,8 @@ function Shape({
     color,
     default_shape,
     range,
-
+    dieBand,
+    splitBand,
 }) {
     this.center = center;
     this.radius = radius;
@@ -19,16 +20,8 @@ function Shape({
     this.range = range;
     this.waveMultiplier = floor(random(1, 6));
     // bands should be specified by range
-    this.splitBand = new FrequencyBand({
-        minValue: 0.8,
-        maxValue: 1.,
-        framesForAction: 30
-    });
-    this.dieBand = new FrequencyBand({
-        minValue: 0,
-        maxValue: 0.01,
-        framesForAction: 150
-    });
+    this.splitBand = splitBand;
+    this.dieBand = dieBand;
 
 
     this.drawColors = function(fillMode, frequencies) {
@@ -49,8 +42,6 @@ function Shape({
             case "frequency":
                 fill(frequencies[this.range]);
                 break;
-
-
         };
         stroke(toColor(this.color));
     };
