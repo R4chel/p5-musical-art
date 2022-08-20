@@ -166,10 +166,10 @@ function Shape({
         }
 
         if(this.splitBand.update(normalizedFrequency)){
-            return "Split";
+            return "SPLIT";
         }
         if(this.dieBand.update(normalizedFrequency)){
-            return "Die";
+            return "DIE";
         }
     };
 

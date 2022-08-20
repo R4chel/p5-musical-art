@@ -67,9 +67,11 @@ function Art(config, ranges) {
             });
             switch (action) {
                 case "DIE":
+                console.log("DIE", this.shapes[i]);
                     deadList.push(i);
                     break;
                 case "SPLIT":
+                console.log("SPLIT", this.shapes[i]);
                     splitList.push(i);
                     break;
                 default:
@@ -79,14 +81,14 @@ function Art(config, ranges) {
             let deadListIndex = deadList.length - 1;
             for (let i = 0; i < splitList.length; i++) {
                 if (this.shapes.length - deadList.length + i <= MAX_NUM_SHAPES) {
-                    let s = this.shapes[this.splitList[i]];
+                    let s = this.shapes[splitList[i]];
                     // probably wanna make the new center offset from the old center
                     let newShape = new Shape({
                         center: s.center,
                         radius: constrain(floor(random(.5, 1.5) * s.radius), this.min_radius, this.max_radius),
                         numPoints: s.numPoints,
                         noise: s.noise,
-                        default_shape: s.default_shape,
+                        default_shape: s.default_shape_kind,
                         range: s.range,
                         color: this.randomColor(),
                     });
