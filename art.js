@@ -1,8 +1,9 @@
 const NUM_COLOR_MODES = 8;
+const MAX_NUM_SHAPES = 15;
 
 function Art(config, ranges) {
     this.config = config;
-    this.fillModes = ["frequency","filled", "noFill", "whiteFill", "randomOpacity", ];
+    this.fillModes = ["frequency", "filled", "noFill", "whiteFill", "randomOpacity", ];
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
     this.min_radius = floor(max(width, height) / 20);
@@ -20,13 +21,18 @@ function Art(config, ranges) {
     this.rotate = true;
     this.maxes = [];
 
-    this.draw = function({soundwave, amplitude, avgSound, safari}) {
+    this.draw = function({
+        soundwave,
+        amplitude,
+        avgSound,
+        safari
+    }) {
         if (this.drawBackground) {
             background(this.background);
         }
         noStroke();
-        fill(color(0,0,0,2));
-        rect(0,0,width,height);
+        fill(color(0, 0, 0, 2));
+        rect(0, 0, width, height);
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
         let normalizedSound = soundwave.map((x) => x / avgSound);
 
@@ -40,19 +46,62 @@ function Art(config, ranges) {
                 min_radius: this.min_radius,
                 shapeKind: shapeKind,
                 frequencies: frequencies,
-                rotate : this.rotate,
+                rotate: this.rotate,
             });
         }
     }
 
-    this.update = function({amplitude, frequencies, avgSound}) {
+    this.update = function({
+        amplitude,
+        frequencies,
+        avgSound
+    }) {
 
+        let deadList = [];
+        let splitList = [];
         for (let i = 0; i < this.shapes.length; i++) {
-            this.shapes[i].update({
+            let action = this.shapes[i].update({
                 move: this.move,
                 frequencies: frequencies,
                 amplitude: min(amplitude * 100, 1.0),
             });
+            switch (action) {
+                case "DIE":
+                    deadList.push(i);
+                    break;
+                case "SPLIT":
+                    splitList.push(i);
+                    break;
+                default:
+                    break;
+            }
+            let newShapes = [];
+            let deadListIndex = deadList.length - 1;
+            for (let i = 0; i < splitList.length; i++) {
+                if (this.shapes.length - deadList.length + i <= MAX_NUM_SHAPES) {
+                    let s = this.shapes[this.splitList[i]];
+                    // probably wanna make the new center offset from the old center
+                    let newShape = new Shape({
+                        center: s.center,
+                        radius: constrain(floor(random(.5, 1.5) * s.radius), this.min_radius, this.max_radius),
+                        numPoints: s.numPoints,
+                        noise: s.noise,
+                        default_shape: s.default_shape,
+                        range: s.range,
+                        color: this.randomColor(),
+                    });
+                    s.radius = constrain(floor(random(.5, 1.1) * s.radius), this.min_radius, this.max_radius);
+                    if (deadListIndex >= 0) {
+                        this.shapes[deadList[deadListIndex]] = newShape;
+                        deadListIndex--;
+                    } else {
+                        this.shapes.push(newShape);
+                    }
+                }
+            };
+            for (let i = deadListIndex; i > 0; i--) {
+                this.shapes.splice(i, 1);
+            }
         }
 
     }
@@ -67,8 +116,19 @@ function Art(config, ranges) {
         // }
     }
 
+    this.removeShape = function() {
+        if (this.shapes.length > 0) {
+            this.shapes.splice(Math.floor(Math.random() * this.shapes.length), 1);
+        }
+    };
+
     this.addShape = function(point) {
-        let center =point === undefined ? randomPoint() : point;
+        // unclear what I want to do here. Should I not spawn a shape if there are too many
+        // or just get rid of existing shapes.
+        if (this.shapes.length > MAX_NUM_SHAPES) {
+            this.removeShape();
+        }
+        let center = point === undefined ? randomPoint() : point;
         let s =
             new Shape({
                 center: center,
@@ -98,7 +158,6 @@ function Art(config, ranges) {
         this.rotate = true;
 
         background(this.background);
-
     }
 
     this.validateRadii = function() {
@@ -165,7 +224,7 @@ function Art(config, ranges) {
                 this.reset();
                 break;
             default:
-            console.log("Key not supported", key);
+                console.log("Key not supported", key);
         }
         if (this.shapes.length == 0 && key != 11) {
             this.colorIndex = key;
@@ -253,6 +312,9 @@ function weightedChoice(weightedList) {
     });
 }
 
-function randomPoint(){
-    return {x : floor(random(width)), y : floor(random(height))};
+function randomPoint() {
+    return {
+        x: floor(random(width)),
+        y: floor(random(height))
+    };
 }

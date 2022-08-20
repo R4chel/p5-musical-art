@@ -6,7 +6,6 @@ function Shape({
     color,
     default_shape,
     range,
-    multiplier,
 
 }) {
     this.center = center;
@@ -19,6 +18,9 @@ function Shape({
     this.default_shape_kind = default_shape;
     this.range = range;
     this.waveMultiplier = floor(random(1, 6));
+    this.splitBand = new FrequencyBand({minValue: 0.8, maxValue: 1., framesForAction:30});
+    this.dieBand = new FrequencyBand({minValue: 0, maxValue: 0.2, framesForAction:30});
+    
 
     this.drawColors = function(fillMode, frequencies) {
         switch (fillMode) {
@@ -42,8 +44,7 @@ function Shape({
 
         };
         stroke(toColor(this.color));
-
-    }
+    };
 
     function fancyHeart(scale, t) {
         t += PI;
@@ -51,7 +52,7 @@ function Shape({
         // note: looks bad if numPoints < 360
         let r = (Math.sin(t) * Math.sqrt(Math.abs(Math.cos(t)))) / (Math.sin(t) + 7 / 5) - 2 * Math.sin(t) + 2;
         return r * scale / 2.5;
-    }
+    };
 
 
     this.rByShape = function(shapeKind, r, theta) {
@@ -59,7 +60,6 @@ function Shape({
             case "star":
                 return r + this.a * sin(this.b * 2 * theta + PI / 2);
                 break;
-
             case "inverseRose":
                 // this is wrong
                 return r * sin((this.b) * theta / (this.b - 1));
@@ -82,7 +82,7 @@ function Shape({
                 break;
 
         }
-    }
+    };
 
     this.period = function(shapeKind) {
         switch (shapeKind) {
@@ -101,7 +101,7 @@ function Shape({
                 break;
 
         }
-    }
+    };
 
     this.draw = function({
         fillMode,
@@ -149,14 +149,14 @@ function Shape({
         frequencies,
         amplitude
     }) {
+        let frequency = frequencies[this.range];
+        let normalizedFrequency = map(frequency, 0, 255, 0, 1);
         if (move) {
             let noise = this.noise;
             let thetaDelta = PI / 10;
-            let frequency = frequencies[this.range];
-
 
             noise = map(frequency, 0, 255, 0, this.noise * 5);
-            thetaDelta = 2 * PI * frequency / (255 * 2);
+            thetaDelta *= normalizedFrequency;
 
             let center_x_update = randomGaussian(0, this.noise);
             let center_y_update = randomGaussian(0, this.noise);
@@ -165,12 +165,13 @@ function Shape({
             this.thetaOffset += random(-thetaDelta, thetaDelta);
         }
 
-        let frequency = frequencies[this.range];
-        let normalizedFrequency = map(frequency, 0, 255, -1, 1);
-        // this.radius += normalizedFrequency;
-
-
-    }
+        if(this.splitBand.update(normalizedFrequency)){
+            return "Split";
+        }
+        if(this.dieBand.update(normalizedFrequency)){
+            return "Die";
+        }
+    };
 
 }
 
