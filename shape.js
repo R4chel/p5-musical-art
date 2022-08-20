@@ -27,7 +27,7 @@ function Shape({
     this.dieBand = new FrequencyBand({
         minValue: 0,
         maxValue: 0.01,
-        framesForAction: 100
+        framesForAction: 150
     });
 
 
