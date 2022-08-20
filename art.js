@@ -131,6 +131,7 @@ function Art(config, ranges) {
                     
 
                     if (deadListIndex >= 0) {
+
                         this.processDead(this.shapes[deadList[deadListIndex]]);
                         this.shapes[deadList[deadListIndex]] = newShape;
                         deadListIndex--;
@@ -148,7 +149,14 @@ function Art(config, ranges) {
 
     this.processDead = function(shape){
         this.frequencyBandsByRanges[shape.range].count--;
-        this.frequencyBandsByRanges[shape.range].dieBand.narrow();
+        this.frequencyBandsByRanges[shape.range].dieBand.widen(false);
+        this.frequencyBandsByRanges[shape.range].dieBand.adjustFrames(random() < 0.75);
+        if(random() < 0.5){
+            this.frequencyBandsByRanges[shape.range].splitBand.widen(true);
+        }
+        if(random() < 0.5){
+            this.frequencyBandsByRanges[shape.range].splitBand.adjustFrames(true);
+        }
     };
     this.encoderSwitch = function(encoder_switch_value) {
         console.log("TODO: encoder switch", encoder_switch_value);
@@ -202,6 +210,10 @@ function Art(config, ranges) {
             });
         this.shapes.push(s);
         this.frequencyBandsByRanges[s.range].count++;
+        this.frequencyBandsByRanges[s.range].dieBand.widen(false);
+        this.frequencyBandsByRanges[s.range].splitBand.narrow(true);
+        this.frequencyBandsByRanges[s.range].splitBand.adjustFrames(random()<0.5);
+        this.frequencyBandsByRanges[s.range].dieBand.adjustFrames(random()<0.5);
     };
 
     this.reset = function() {
