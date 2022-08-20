@@ -28,7 +28,7 @@ function Art(config, ranges) {
         dieBand: new FrequencyBand({
             minValue: 0,
             maxValue: 0.01,
-            framesForAction: 150
+            framesForAction: 50
         }),
         count: 0,
     }]));
@@ -66,7 +66,7 @@ function Art(config, ranges) {
                 rotate: this.rotate,
             });
         }
-    }
+    };
 
     this.update = function({
         amplitude,
@@ -132,8 +132,8 @@ function Art(config, ranges) {
                 }
             };
             for (let i = deadListIndex; i >= 0; i--) {
-                let shape = this.shapes.splice(i, 1);
-                this.processDead(shape);
+                let elts = this.shapes.splice(i, 1);
+                this.processDead(elts[0]);
             }
         }
     };
