@@ -4,7 +4,7 @@ const MAX_SHAPES_PER_RANGE = 5;
 
 function Art(config, ranges) {
     this.config = config;
-    this.fillModes = ["frequency", "frequencyPalette", "filled", "noFill", "whiteFill", "randomOpacity", ];
+    this.fillModes = ["frequency", "frequencyPalette", "frequencyRandomPalette","filled", "noFill", "whiteFill", "randomOpacity", ];
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
     this.min_radius = floor(max(width, height) / 20);
@@ -110,7 +110,7 @@ function Art(config, ranges) {
                         noise: s.noise,
                         default_shape: s.default_shape_kind,
                         range: s.range,
-                        color: this.randomColor(),
+                        strokeColor: this.randomColor(),
                         dieBand : new FrequencyBand({minValue : s.dieBand.minValue, maxValue : s.dieBand.maxValue, framesForAction : s.dieBand.framesForAction}),
                         splitBand : new FrequencyBand({minValue : s.splitBand.minValue, maxValue : s.splitBand.maxValue, framesForAction : s.splitBand.framesForAction}),
                     });
@@ -184,7 +184,7 @@ function Art(config, ranges) {
             new Shape({
                 center: center,
                 radius: round(random(this.min_radius, this.max_radius)),
-                color: this.randomColor(),
+                strokeColor: this.randomColor(),
                 numPoints: this.numPoints,
                 noise: this.noise,
                 default_shape: random(this.shapeModes),

@@ -3,7 +3,7 @@ function Shape({
     radius,
     noise,
     numPoints,
-    color,
+    strokeColor,
     default_shape,
     range,
     dieBand,
@@ -11,7 +11,7 @@ function Shape({
 }) {
     this.center = center;
     this.radius = radius;
-    this.color = color;
+    this.color = strokeColor;
     this.noise = noise;
     this.thetaOffset = random(0, 2 * PI);
     this.a = floor(random(3, 8));
@@ -22,9 +22,15 @@ function Shape({
     // bands should be specified by range
     this.splitBand = splitBand;
     this.dieBand = dieBand;
+    this.c1 = color(floor(random(256)), floor(random(256)), floor(random(256)));
+    this.c2 = color(floor(random(256)), floor(random(256)), floor(random(256)));
+
+
 
 
     this.drawColors = function(fillMode, frequencies) {
+        let frequency = frequencies[this.range];
+        let normalizedFrequency = map(frequency, 0, 255, 0, 1);
         switch (fillMode) {
             case "noFill":
                 noFill();
@@ -40,11 +46,14 @@ function Shape({
                 fill(this.color.r, this.color.g, this.color.b, random(255));
                 break;
             case "frequency":
-            fill(frequencies[this.range]);
-            break;
+                fill(frequency);
+                break;
             case "frequencyPalette":
-            fill(palette(frequencies[this.range]));
-            break;
+                fill(palette(frequency));
+                break;
+            case "frequencyRandomPalette":
+                fill(lerpColor(this.c1, this.c2, normalizedFrequency));
+                break;
 
         };
         stroke(toColor(this.color));
@@ -191,5 +200,5 @@ function palette(frequency) {
     let c1 = color("#f5c900");
     let c2 = color("#FF51EB");
     let normalized = map(frequency, 0, 255, 0, 1);
-    return lerpColor(c1,c2,normalized);
+    return lerpColor(c1, c2, normalized);
 }
