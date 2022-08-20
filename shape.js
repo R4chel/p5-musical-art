@@ -25,9 +25,6 @@ function Shape({
     this.c1 = color(floor(random(256)), floor(random(256)), floor(random(256)));
     this.c2 = color(floor(random(256)), floor(random(256)), floor(random(256)));
 
-
-
-
     this.drawColors = function(fillMode, frequencies) {
         let frequency = frequencies[this.range];
         let normalizedFrequency = map(frequency, 0, 255, 0, 1);
@@ -52,6 +49,7 @@ function Shape({
                 fill(palette(frequency));
                 break;
             case "frequencyRandomPalette":
+
                 fill(lerpColor(this.c1, this.c2, normalizedFrequency));
                 break;
 

@@ -126,7 +126,7 @@ function Art(config, ranges) {
                    
                     s.radius = constrain(floor(random(.5, 1.1) * s.radius), this.min_radius, this.max_radius);
                     s.resetFrequencyBands();
-                    s.dieBand.widden(false);
+                    s.dieBand.widen(false);
                     s.splitBand.narrow(true);
                     
 
