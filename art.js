@@ -116,6 +116,14 @@ function Art(config, ranges) {
                     });
                     newShape.dieBand.adjustFrames(true);
                     newShape.splitBand.adjustFrames(false);
+                    // I'm not sure about this;
+                    if(random() < 0.5){
+                        newShape.c2 = s.c2;
+                    }
+                    else{
+                        newShape.c1 = s.c1;
+                    };
+                   
                     s.radius = constrain(floor(random(.5, 1.1) * s.radius), this.min_radius, this.max_radius);
                     s.resetFrequencyBands();
                     s.dieBand.widden(false);
@@ -200,7 +208,7 @@ function Art(config, ranges) {
         this.shapes = [];
         this.min_radius = 5;
         this.max_radius = 100;
-        this.colorIndex = 0;
+        this.colorIndex = floor(random(NUM_COLOR_MODES));
         this.numPoints = 50;
         this.noise = 5;
         this.fillModeIndex = 0;
@@ -223,7 +231,7 @@ function Art(config, ranges) {
             this.min_radius -= 5;
         }
 
-    }
+    };
 
     this.keyPress = function(key) {
         switch (key) {
@@ -235,8 +243,11 @@ function Art(config, ranges) {
                 break;
 
             case 2:
-                this.rotate = !this.rotate;
-                console.log(this);
+
+            for (let i = 0; i < this.shapes.length; i++) {
+                this.shapes[i].c1 = color(floor(random(255)),floor(random(255)),floor(random(255)));
+                this.shapes[i].c2 = color(floor(random(255)),floor(random(255)),floor(random(255)));
+            }
                 break;
             case 3:
                 this.shapeOverride = true;
