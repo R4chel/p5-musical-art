@@ -19,9 +19,17 @@ function Shape({
     this.range = range;
     this.waveMultiplier = floor(random(1, 6));
     // bands should be specified by range
-    this.splitBand = new FrequencyBand({minValue: 0.8, maxValue: 1., framesForAction:30});
-    this.dieBand = new FrequencyBand({minValue: 0, maxValue: 0.5, framesForAction:30});
-    
+    this.splitBand = new FrequencyBand({
+        minValue: 0.8,
+        maxValue: 1.,
+        framesForAction: 30
+    });
+    this.dieBand = new FrequencyBand({
+        minValue: 0,
+        maxValue: 0.01,
+        framesForAction: 100
+    });
+
 
     this.drawColors = function(fillMode, frequencies) {
         switch (fillMode) {
@@ -124,8 +132,8 @@ function Shape({
         }
         for (let i = 0; i < soundwave.length; i++) {
             let theta = i * period / soundwave.length;
-            
-            let r = map(soundwave[i], 0, 1, radius, radius * 5/4);
+
+            let r = map(soundwave[i], 0, 1, radius, radius * 5 / 4);
             // let r = radius + soundwave[i] * this.waveMultiplier;
             let rotatedTheta = rotate ? theta + this.thetaOffset : theta;
             r = this.rByShape(shapeKind, r, rotatedTheta);
@@ -153,11 +161,9 @@ function Shape({
         let frequency = frequencies[this.range];
         let normalizedFrequency = map(frequency, 0, 255, 0, 1);
         if (move) {
-            let noise = this.noise;
-            let thetaDelta = PI / 10;
 
-            noise = map(frequency, 0, 255, 0.001, this.noise * this.radius);
-            thetaDelta *= normalizedFrequency;
+            let noise = map(frequency, 0, 255, 0.001, this.noise * this.radius);
+            let thetaDelta = map(frequency, 0, 255, 0.001, PI / 2);
 
             let center_x_update = randomGaussian(0, noise);
             let center_y_update = randomGaussian(0, noise);
@@ -166,16 +172,16 @@ function Shape({
             this.thetaOffset += random(-thetaDelta, thetaDelta);
         }
 
-        if(this.splitBand.update(normalizedFrequency)){
-            console.log(this.range,normalizedFrequency, this.splitBand);
+        if (this.splitBand.update(normalizedFrequency)) {
+            console.log(this.range, normalizedFrequency, this.splitBand);
             return "SPLIT";
         }
-        if(this.dieBand.update(normalizedFrequency)){
+        if (this.dieBand.update(normalizedFrequency)) {
             return "DIE";
         }
     };
 
-    this.resetFrequencyBands = function(){
+    this.resetFrequencyBands = function() {
         this.splitBand.reset();
         this.dieBand.reset();
     }
