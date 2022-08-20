@@ -15,4 +15,8 @@ function FrequencyBand({
         }
         return (this.frames > this.framesForAction);
     };
+
+    this.reset = function(frequency) {
+        this.frames = 0;
+    }
 }

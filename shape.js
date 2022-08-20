@@ -155,11 +155,11 @@ function Shape({
             let noise = this.noise;
             let thetaDelta = PI / 10;
 
-            noise = map(frequency, 0, 255, 0, this.noise * 5);
+            noise = map(frequency, 0, 255, 0.001, this.noise * this.radius);
             thetaDelta *= normalizedFrequency;
 
-            let center_x_update = randomGaussian(0, this.noise);
-            let center_y_update = randomGaussian(0, this.noise);
+            let center_x_update = randomGaussian(0, noise);
+            let center_y_update = randomGaussian(0, noise);
             this.center.x = constrain(center.x + center_x_update, 0, width);
             this.center.y = constrain(center.y + center_y_update, 0, height);
             this.thetaOffset += random(-thetaDelta, thetaDelta);
@@ -172,6 +172,11 @@ function Shape({
             return "DIE";
         }
     };
+
+    this.resetFrequencyBands = function(){
+        this.splitBand.reset();
+        this.dieBand.reset();
+    }
 
 }
 

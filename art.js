@@ -80,11 +80,11 @@ function Art(config, ranges) {
             let newShapes = [];
             let deadListIndex = deadList.length - 1;
             for (let i = 0; i < splitList.length; i++) {
-                if (this.shapes.length - deadList.length + i <= MAX_NUM_SHAPES) {
+                if (this.shapes.length - deadListIndex + i <= MAX_NUM_SHAPES) {
                     let s = this.shapes[splitList[i]];
                     // probably wanna make the new center offset from the old center
                     let newShape = new Shape({
-                        center: s.center,
+                        center: {x : s.center.x, y: s.center.y},
                         radius: constrain(floor(random(.5, 1.5) * s.radius), this.min_radius, this.max_radius),
                         numPoints: s.numPoints,
                         noise: s.noise,
@@ -93,6 +93,7 @@ function Art(config, ranges) {
                         color: this.randomColor(),
                     });
                     s.radius = constrain(floor(random(.5, 1.1) * s.radius), this.min_radius, this.max_radius);
+                    s.resetFrequencyBands();
                     if (deadListIndex >= 0) {
                         this.shapes[deadList[deadListIndex]] = newShape;
                         deadListIndex--;
