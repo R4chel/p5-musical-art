@@ -32,6 +32,7 @@ function Art(config, ranges) {
         }),
         count: 0,
     }]));
+    this.rangesWithoutShapes = new Set(ranges);
     this.rotate = true;
     this.maxes = [];
 
@@ -139,6 +140,7 @@ function Art(config, ranges) {
                     s.splitBand.narrow(true);
 
                     this.frequencyBandsByRanges[s.range].count++;
+                    this.rangesWithoutShapes.delete(s.range);
 
                     if (deadListIndex >= 0) {
 
@@ -159,6 +161,9 @@ function Art(config, ranges) {
 
     this.processDead = function(shape) {
         this.frequencyBandsByRanges[shape.range].count--;
+        if(frequencyBandsByRanges[shape.range].count == 0){
+            this.rangesWithoutShapes.add(shape.range);
+        }
         this.frequencyBandsByRanges[shape.range].dieBand.widen(false);
         this.frequencyBandsByRanges[shape.range].dieBand.adjustFrames(random() < 0.75);
         if (random() < 0.5) {
@@ -227,11 +232,14 @@ function Art(config, ranges) {
                 }),
             });
         this.shapes.push(s);
+        this.rangesWithoutShapes.delete(s.range);
         this.frequencyBandsByRanges[s.range].count++;
         this.frequencyBandsByRanges[s.range].dieBand.widen(false);
         this.frequencyBandsByRanges[s.range].splitBand.narrow(true);
         this.frequencyBandsByRanges[s.range].splitBand.adjustFrames(random() < 0.5);
         this.frequencyBandsByRanges[s.range].dieBand.adjustFrames(random() < 0.5);
+
+        
     };
 
     this.reset = function() {
