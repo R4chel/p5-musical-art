@@ -71,15 +71,17 @@ function Art(config, ranges) {
     this.update = function({
         amplitude,
         frequencies,
-        avgSound
+        avgSound,
+        safari
     }) {
+        let amplitudeModifier = safari ? 10 : 100;
         let deadList = [];
         let splitList = [];
         for (let i = 0; i < this.shapes.length; i++) {
             let action = this.shapes[i].update({
                 move: this.move,
                 frequencies: frequencies,
-                amplitude: min(amplitude * 100, 1.0),
+                amplitude: min(amplitude * amplitudeModifier, 1.0),
             });
             switch (action) {
                 case "DIE":
