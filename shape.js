@@ -174,7 +174,6 @@ function Shape({
         }
 
         if (this.splitBand.update(normalizedFrequency)) {
-            console.log(this.range, normalizedFrequency, this.splitBand);
             return "SPLIT";
         }
         if (this.dieBand.update(normalizedFrequency)) {

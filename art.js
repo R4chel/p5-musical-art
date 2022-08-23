@@ -157,17 +157,24 @@ function Art(config, ranges) {
                 this.processDead(elts[0]);
             }
         }
-        if(amplitude / avgSound > 1.1 && this.rangesWithoutShapes.size > 0 && random() < 0.01 ){
-            let range = random(this.rangesWithoutShapes.keys);
-            console.log("Adding Shape", range);
-            this.addShape(undefined, range);
+        // lots of parameter tweaking to do here
+        // TODO add something about amount of time since last shape added 
+        if (amplitude / avgSound > 1.05 && this.rangesWithoutShapes.size > 0) {
+            if (random() < 0.25*this.rangesWithoutShapes.size* amplitude /avgSound) {
 
+                let range = random([...this.rangesWithoutShapes.keys()]);
+                console.log("Adding Shape", range);
+                this.addShape(undefined, range);
+
+            } else {
+                console.log("not this time")
+            }
         }
     };
 
     this.processDead = function(shape) {
         this.frequencyBandsByRanges[shape.range].count--;
-        if(this.frequencyBandsByRanges[shape.range].count == 0){
+        if (this.frequencyBandsByRanges[shape.range].count == 0) {
             this.rangesWithoutShapes.add(shape.range);
         }
         this.frequencyBandsByRanges[shape.range].dieBand.widen(false);
@@ -195,7 +202,7 @@ function Art(config, ranges) {
         if (this.shapes.length > 0) {
             let shape = this.shapes.splice(i, 1);
             this.frequencyBandsByRanges[shape.range].count--;
-            if(this.frequencyBandsByRanges[shape.range].count == 0){
+            if (this.frequencyBandsByRanges[shape.range].count == 0) {
                 this.rangesWithoutShapes.add(shape.range);
             }
         }
@@ -208,7 +215,7 @@ function Art(config, ranges) {
             this.removeShape();
         }
         let bands;
-        if(range === undefined){
+        if (range === undefined) {
             let chooseableRanges =
                 Object.entries(this.frequencyBandsByRanges).filter(([k, value]) => value.count < MAX_SHAPES_PER_RANGE);
             if (chooseableRanges.length < 1) {
@@ -219,9 +226,8 @@ function Art(config, ranges) {
             let rangeAndBand = random(chooseableRanges);
             range = rangeAndBand[0];
             bands = rangeAndBand[1];
-            
-        }
-        else{
+
+        } else {
             bands = this.frequencyBandsByRanges[range];
         }
 
