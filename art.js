@@ -156,8 +156,7 @@ function Art(config, ranges) {
                 let elts = this.shapes.splice(i, 1);
                 this.processDead(elts[0]);
             }
-        } <<
-        << << < HEAD
+        }
         // lots of parameter tweaking to do here
         // TODO add something about amount of time since last shape added 
         if (amplitude / avgSound > 1.05 && this.rangesWithoutShapes.size > 0) {
@@ -169,285 +168,278 @@ function Art(config, ranges) {
 
             } else {
                 console.log("not this time");
-            } ===
-            === =
-            if (amplitude / avgSound > 1.1 && this.rangesWithoutShapes.size > 0 && random() < 0.01) {
-                let range = random(this.rangesWithoutShapes.keys);
-                console.log("Adding Shape", range);
-                this.addShape(undefined, range);
-
-                >>>
-                >>> > cb8706f(trying stuff)
             }
-        };
+        }
+    };
 
-        this.processDead = function(shape) {
+    this.processDead = function(shape) {
+        this.frequencyBandsByRanges[shape.range].count--;
+        if (this.frequencyBandsByRanges[shape.range].count == 0) {
+            this.rangesWithoutShapes.add(shape.range);
+        }
+        this.frequencyBandsByRanges[shape.range].dieBand.narrow(false);
+        this.frequencyBandsByRanges[shape.range].dieBand.adjustFrames(random() < 0.25);
+        if (random() < 0.5) {
+            this.frequencyBandsByRanges[shape.range].splitBand.widen(true);
+        }
+        if (random() < 0.5) {
+            this.frequencyBandsByRanges[shape.range].splitBand.adjustFrames(true);
+        }
+    };
+
+    this.encoderSwitch = function(encoder_switch_value) {
+        console.log("TODO: encoder switch", encoder_switch_value);
+    };
+
+    this.encoder = function(value) {
+        // if (value > -20) {
+        //     frameRate(value + 20);
+        // }
+    };
+
+    this.removeShape = function(i) {
+        i = i === undefined ? floor(random() * this.shapes.length) : i;
+        if (this.shapes.length > 0) {
+            let shape = this.shapes.splice(i, 1)[0];
+            console.log("removed", shape);
             this.frequencyBandsByRanges[shape.range].count--;
             if (this.frequencyBandsByRanges[shape.range].count == 0) {
                 this.rangesWithoutShapes.add(shape.range);
             }
-            this.frequencyBandsByRanges[shape.range].dieBand.narrow(false);
-            this.frequencyBandsByRanges[shape.range].dieBand.adjustFrames(random() < 0.25);
-            if (random() < 0.5) {
-                this.frequencyBandsByRanges[shape.range].splitBand.widen(true);
-            }
-            if (random() < 0.5) {
-                this.frequencyBandsByRanges[shape.range].splitBand.adjustFrames(true);
-            }
-        };
+        }
+    };
 
-        this.encoderSwitch = function(encoder_switch_value) {
-            console.log("TODO: encoder switch", encoder_switch_value);
-        };
-
-        this.encoder = function(value) {
-            // if (value > -20) {
-            //     frameRate(value + 20);
-            // }
-        };
-
-        this.removeShape = function(i) {
-            i = i === undefined ? floor(random() * this.shapes.length) : i;
-            if (this.shapes.length > 0) {
-                let shape = this.shapes.splice(i, 1)[0];
-                console.log("removed", shape);
-                this.frequencyBandsByRanges[shape.range].count--;
-                if (this.frequencyBandsByRanges[shape.range].count == 0) {
-                    this.rangesWithoutShapes.add(shape.range);
-                }
-            }
-        };
-
-        this.addShape = function(point, range) {
-            // unclear what I want to do here. Should I not spawn a shape if there are too many
-            // or just get rid of existing shapes.
-            if (this.shapes.length > MAX_NUM_SHAPES) {
-                this.removeShape();
-            }
-            let bands;
-            if (range === undefined) {
-                let chooseableRanges =
-                    Object.entries(this.frequencyBandsByRanges).filter(([k, value]) => value.count < MAX_SHAPES_PER_RANGE);
-                if (chooseableRanges.length < 1) {
-                    console.log("UHOH THERES A WEIRD BUG", this.frequencyBandsByRanges);
-                    chooseableRanges = Object.entries(this.frequencyBandsByRanges.entries());
-                }
-
-                let rangeAndBand = random(chooseableRanges);
-                range = rangeAndBand[0];
-                bands = rangeAndBand[1];
-            } else {
-                bands = this.frequencyBandsByRanges[range];
+    this.addShape = function(point, range) {
+        // unclear what I want to do here. Should I not spawn a shape if there are too many
+        // or just get rid of existing shapes.
+        if (this.shapes.length > MAX_NUM_SHAPES) {
+            this.removeShape();
+        }
+        let bands;
+        if (range === undefined) {
+            let chooseableRanges =
+                Object.entries(this.frequencyBandsByRanges).filter(([k, value]) => value.count < MAX_SHAPES_PER_RANGE);
+            if (chooseableRanges.length < 1) {
+                console.log("UHOH THERES A WEIRD BUG", this.frequencyBandsByRanges);
+                chooseableRanges = Object.entries(this.frequencyBandsByRanges.entries());
             }
 
-            let center = point === undefined ? randomPoint() : point;
-            let s =
-                new Shape({
-                    center: center,
-                    radius: round(random(this.min_radius, this.max_radius)),
-                    strokeColor: this.randomColor(),
-                    numPoints: this.numPoints,
-                    noise: this.noise,
-                    default_shape: random(this.shapeModes),
-                    range: range,
-                    dieBand: new FrequencyBand({
-                        minValue: bands.dieBand.minValue,
-                        maxValue: bands.dieBand.maxValue,
-                        framesForAction: bands.dieBand.framesForAction
-                    }),
-                    splitBand: new FrequencyBand({
-                        minValue: bands.splitBand.minValue,
-                        maxValue: bands.splitBand.maxValue,
-                        framesForAction: bands.splitBand.framesForAction
-                    }),
-                });
-            this.shapes.push(s);
-            this.rangesWithoutShapes.delete(s.range);
-            this.frequencyBandsByRanges[s.range].count++;
-            this.frequencyBandsByRanges[s.range].dieBand.widen(false);
-            this.frequencyBandsByRanges[s.range].splitBand.narrow(true);
-            this.frequencyBandsByRanges[s.range].splitBand.adjustFrames(random() < 0.5);
-            this.frequencyBandsByRanges[s.range].dieBand.adjustFrames(random() < 0.5);
+            let rangeAndBand = random(chooseableRanges);
+            range = rangeAndBand[0];
+            bands = rangeAndBand[1];
 
-        };
-
-        this.reset = function() {
-            this.shapes = [];
-            this.min_radius = 5;
-            this.max_radius = 100;
-            this.colorIndex = floor(random(NUM_COLOR_MODES));
-            this.numPoints = 50;
-            this.noise = 5;
-            this.fillModeIndex = 0;
-            this.shapeModeIndex = 0;
-            this.shapeOverride = false;
-            this.move = true;
-            this.background = color(floor(random(255)));
-            this.drawBackground = false;
-            this.rotate = true;
-
-            background(this.background);
+        } else {
+            bands = this.frequencyBandsByRanges[range];
         }
 
-        this.validateRadii = function() {
-            if (this.min_radius <= 0) {
-                this.min_radius = floor(random(5, 10));
-            }
-            if (this.min_radius > this.max_radius) {
-                this.max_radius += 5;
-                this.min_radius -= 5;
-            }
+        let center = point === undefined ? randomPoint() : point;
+        let s =
+            new Shape({
+                center: center,
+                radius: round(random(this.min_radius, this.max_radius)),
+                strokeColor: this.randomColor(),
+                numPoints: this.numPoints,
+                noise: this.noise,
+                default_shape: random(this.shapeModes),
+                range: range,
+                dieBand: new FrequencyBand({
+                    minValue: bands.dieBand.minValue,
+                    maxValue: bands.dieBand.maxValue,
+                    framesForAction: bands.dieBand.framesForAction
+                }),
+                splitBand: new FrequencyBand({
+                    minValue: bands.splitBand.minValue,
+                    maxValue: bands.splitBand.maxValue,
+                    framesForAction: bands.splitBand.framesForAction
+                }),
+            });
+        this.shapes.push(s);
+        this.rangesWithoutShapes.delete(s.range);
+        this.frequencyBandsByRanges[s.range].count++;
+        this.frequencyBandsByRanges[s.range].dieBand.widen(false);
+        this.frequencyBandsByRanges[s.range].splitBand.narrow(true);
+        this.frequencyBandsByRanges[s.range].splitBand.adjustFrames(random() < 0.5);
+        this.frequencyBandsByRanges[s.range].dieBand.adjustFrames(random() < 0.5);
 
-        };
+    };
 
-        this.keyPress = function(key) {
-            switch (key) {
-                case 0:
-                    this.addShape();
-                    break;
-                case 1:
-                    this.fillModeIndex = (this.fillModeIndex + 1) % this.fillModes.length;
-                    break;
+    this.reset = function() {
+        this.shapes = [];
+        this.min_radius = 5;
+        this.max_radius = 100;
+        this.colorIndex = floor(random(NUM_COLOR_MODES));
+        this.numPoints = 50;
+        this.noise = 5;
+        this.fillModeIndex = 0;
+        this.shapeModeIndex = 0;
+        this.shapeOverride = false;
+        this.move = true;
+        this.background = color(floor(random(255)));
+        this.drawBackground = false;
+        this.rotate = true;
 
-                case 2:
+        background(this.background);
+    }
 
-                    for (let i = 0; i < this.shapes.length; i++) {
-                        this.shapes[i].c1 = color(floor(random(255)), floor(random(255)), floor(random(255)));
-                        this.shapes[i].c2 = color(floor(random(255)), floor(random(255)), floor(random(255)));
-                    }
-                    break;
-                case 3:
-                    this.shapeOverride = true;
-                    this.shapeModeIndex = (this.shapeModeIndex + 1) % this.shapeModes.length;
-                    break;
-                case 4:
-                    this.shapeOverride = !this.shapeOverride;
-                    break;
-                case 5:
-                    this.min_radius += floor(random(5));
-                    this.max_radius += floor(random(5));
-                    this.validateRadii();
-                    console.log(this.min_radius, this.max_radius);
-                    break;
-                case 6:
-                    this.min_radius -= floor(random(5));
-                    this.max_radius -= floor(random(5));
-                    this.validateRadii();
-                    console.log(this.min_radius, this.max_radius);
-                    break;
-                case 7:
-                    this.drawBackground = !this.drawBackground;
-                    break;
+    this.validateRadii = function() {
+        if (this.min_radius <= 0) {
+            this.min_radius = floor(random(5, 10));
+        }
+        if (this.min_radius > this.max_radius) {
+            this.max_radius += 5;
+            this.min_radius -= 5;
+        }
 
-                case 8:
-                    for (let i = 0; i < this.shapes.length; i++) {
-                        this.shapes[i].default_shape_kind = random(this.shapeModes);
-                    }
-                    this.shapeOverride = false;
+    };
 
-                    break;
-                case 9:
-                    this.removeShape();
-                    break;
-                case 10:
-                    this.colorIndex = (this.colorIndex + 1) % NUM_COLOR_MODES;
-                    this.move = !this.move;
-                    break;
-                case 11:
-                    this.reset();
-                    break;
-                default:
-                    console.log("Key not supported", key);
-            }
-            if (this.shapes.length == 0 && key != 11) {
-                this.colorIndex = key;
-                this.shapeModeIndex = floor(random(this.shapeModes.length));
-                if (key > 6) {
-                    this.min_radius += key;
-                    this.max_radius += key;
-                } else {
-                    this.min_radius -= key;
-                    this.max_radius -= key;
-                }
+    this.keyPress = function(key) {
+        switch (key) {
+            case 0:
                 this.addShape();
-            }
+                break;
+            case 1:
+                this.fillModeIndex = (this.fillModeIndex + 1) % this.fillModes.length;
+                break;
 
+            case 2:
+
+                for (let i = 0; i < this.shapes.length; i++) {
+                    this.shapes[i].c1 = color(floor(random(255)), floor(random(255)), floor(random(255)));
+                    this.shapes[i].c2 = color(floor(random(255)), floor(random(255)), floor(random(255)));
+                }
+                break;
+            case 3:
+                this.shapeOverride = true;
+                this.shapeModeIndex = (this.shapeModeIndex + 1) % this.shapeModes.length;
+                break;
+            case 4:
+                this.shapeOverride = !this.shapeOverride;
+                break;
+            case 5:
+                this.min_radius += floor(random(5));
+                this.max_radius += floor(random(5));
+                this.validateRadii();
+                console.log(this.min_radius, this.max_radius);
+                break;
+            case 6:
+                this.min_radius -= floor(random(5));
+                this.max_radius -= floor(random(5));
+                this.validateRadii();
+                console.log(this.min_radius, this.max_radius);
+                break;
+            case 7:
+                this.drawBackground = !this.drawBackground;
+                break;
+
+            case 8:
+                for (let i = 0; i < this.shapes.length; i++) {
+                    this.shapes[i].default_shape_kind = random(this.shapeModes);
+                }
+                this.shapeOverride = false;
+
+                break;
+            case 9:
+                this.removeShape();
+                break;
+            case 10:
+                this.colorIndex = (this.colorIndex + 1) % NUM_COLOR_MODES;
+                this.move = !this.move;
+                break;
+            case 11:
+                this.reset();
+                break;
+            default:
+                console.log("Key not supported", key);
+        }
+        if (this.shapes.length == 0 && key != 11) {
+            this.colorIndex = key;
+            this.shapeModeIndex = floor(random(this.shapeModes.length));
+            if (key > 6) {
+                this.min_radius += key;
+                this.max_radius += key;
+            } else {
+                this.min_radius -= key;
+                this.max_radius -= key;
+            }
+            this.addShape();
         }
 
-        this.randomColor = function() {
+    }
 
-            let vals = [...Array(3)].map(() => random(255));
-            vals.sort();
-            switch (this.colorIndex) {
-                case 0:
-                    return {
-                        r: vals[0], g: vals[1], b: vals[2]
-                    };
-                case 1:
-                    return {
-                        r: vals[0], g: vals[2], b: vals[1]
-                    };
-                case 2:
-                    return {
-                        r: vals[1], g: vals[0], b: vals[2]
-                    };
-                case 3:
-                    return {
-                        r: vals[1], g: vals[2], b: vals[1]
-                    };
-                case 4:
-                    return {
-                        r: vals[2], g: vals[0], b: vals[1]
-                    };
-                case 5:
-                    return {
-                        r: vals[2], g: vals[1], b: vals[0]
-                    };
-                case 6:
-                    return {
-                        r: vals[1], g: vals[1], b: vals[1]
-                    };
-                case 7:
-                    // IF YOU ADD THINGS HERE UPDATE NUM COLOR MODES 
-                case 8:
-                case 9:
-                case 10:
-                case 11:
+    this.randomColor = function() {
 
-                default:
-                    return {
-                        r: random(255), g: random(255), b: random(255)
-                    };
+        let vals = [...Array(3)].map(() => random(255));
+        vals.sort();
+        switch (this.colorIndex) {
+            case 0:
+                return {
+                    r: vals[0], g: vals[1], b: vals[2]
+                };
+            case 1:
+                return {
+                    r: vals[0], g: vals[2], b: vals[1]
+                };
+            case 2:
+                return {
+                    r: vals[1], g: vals[0], b: vals[2]
+                };
+            case 3:
+                return {
+                    r: vals[1], g: vals[2], b: vals[1]
+                };
+            case 4:
+                return {
+                    r: vals[2], g: vals[0], b: vals[1]
+                };
+            case 5:
+                return {
+                    r: vals[2], g: vals[1], b: vals[0]
+                };
+            case 6:
+                return {
+                    r: vals[1], g: vals[1], b: vals[1]
+                };
+            case 7:
+                // IF YOU ADD THINGS HERE UPDATE NUM COLOR MODES 
+            case 8:
+            case 9:
+            case 10:
+            case 11:
 
-            }
+            default:
+                return {
+                    r: random(255), g: random(255), b: random(255)
+                };
+
+        }
+    }
+}
+
+function weightedChoice(weightedList) {
+    let totalWeight = 0;
+
+    for (let i = 0; i < weightedList.length; i++) {
+        totalWeight += weightedList[i].weight;
+    }
+    let choice = floor(random(0, totalWeight));
+    let currentWeight = 0;
+    for (let i = 0; i < weightedList.length; i++) {
+        currentWeight += weightedList[i].weight;
+        if (currentWeight > choice) {
+            return weightedList[i].value;
         }
     }
 
-    function weightedChoice(weightedList) {
-        let totalWeight = 0;
+    console.error("Error choosing element from weighted list", {
+        choice: choice,
+        totalWeight: totalWeight,
+        weightedList: weightedList,
+    });
+}
 
-        for (let i = 0; i < weightedList.length; i++) {
-            totalWeight += weightedList[i].weight;
-        }
-        let choice = floor(random(0, totalWeight));
-        let currentWeight = 0;
-        for (let i = 0; i < weightedList.length; i++) {
-            currentWeight += weightedList[i].weight;
-            if (currentWeight > choice) {
-                return weightedList[i].value;
-            }
-        }
-
-        console.error("Error choosing element from weighted list", {
-            choice: choice,
-            totalWeight: totalWeight,
-            weightedList: weightedList,
-        });
-    }
-
-    function randomPoint() {
-        return {
-            x: floor(random(width)),
-            y: floor(random(height))
-        };
-    }
+function randomPoint() {
+    return {
+        x: floor(random(width)),
+        y: floor(random(height))
+    };
+}
