@@ -157,7 +157,12 @@ function Art(config, ranges) {
                 this.processDead(elts[0]);
             }
         }
+        if(amplitude / avgSound > 1.1 && this.rangesWithoutShapes.size > 0 && random() < 0.01 ){
+            let range = random(this.rangesWithoutShapes.keys);
+            console.log("Adding Shape", range);
+            this.addShape(undefined, range);
 
+        }
     };
 
     this.processDead = function(shape) {
@@ -196,22 +201,29 @@ function Art(config, ranges) {
         }
     };
 
-    this.addShape = function(point) {
+    this.addShape = function(point, range) {
         // unclear what I want to do here. Should I not spawn a shape if there are too many
         // or just get rid of existing shapes.
         if (this.shapes.length > MAX_NUM_SHAPES) {
             this.removeShape();
         }
-        let chooseableRanges =
-            Object.entries(this.frequencyBandsByRanges).filter(([k, value]) => value.count < MAX_SHAPES_PER_RANGE);
-        if (chooseableRanges.length < 1) {
-            console.log("UHOH THERES A WEIRD BUG", this.frequencyBandsByRanges);
-            chooseableRanges = Object.entries(this.frequencyBandsByRanges.entries());
-        }
+        let bands;
+        if(range === undefined){
+            let chooseableRanges =
+                Object.entries(this.frequencyBandsByRanges).filter(([k, value]) => value.count < MAX_SHAPES_PER_RANGE);
+            if (chooseableRanges.length < 1) {
+                console.log("UHOH THERES A WEIRD BUG", this.frequencyBandsByRanges);
+                chooseableRanges = Object.entries(this.frequencyBandsByRanges.entries());
+            }
 
-        let rangeAndBand = random(chooseableRanges);
-        let range = rangeAndBand[0];
-        let bands = rangeAndBand[1];
+            let rangeAndBand = random(chooseableRanges);
+            range = rangeAndBand[0];
+            bands = rangeAndBand[1];
+            
+        }
+        else{
+            bands = this.frequencyBandsByRanges[range];
+        }
 
         let center = point === undefined ? randomPoint() : point;
         let s =
@@ -242,7 +254,6 @@ function Art(config, ranges) {
         this.frequencyBandsByRanges[s.range].splitBand.adjustFrames(random() < 0.5);
         this.frequencyBandsByRanges[s.range].dieBand.adjustFrames(random() < 0.5);
 
-        
     };
 
     this.reset = function() {
