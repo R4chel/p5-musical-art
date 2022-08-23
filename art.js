@@ -188,7 +188,7 @@ function Art(config, ranges) {
     this.removeShape = function(i) {
         i = i === undefined ? Math.floor(Math.random() * this.shapes.length) : i;
         if (this.shapes.length > 0) {
-            let shape = this.shapes.splice(i, 1);
+            let shape = this.shapes.splice(i, 1)[0];
             this.frequencyBandsByRanges[shape.range].count--;
             if(this.frequencyBandsByRanges[shape.range].count == 0){
                 this.rangesWithoutShapes.add(shape.range);
