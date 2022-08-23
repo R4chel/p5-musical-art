@@ -157,11 +157,12 @@ function Art(config, ranges) {
                 this.processDead(elts[0]);
             }
         }
+
     };
 
     this.processDead = function(shape) {
         this.frequencyBandsByRanges[shape.range].count--;
-        if(frequencyBandsByRanges[shape.range].count == 0){
+        if(this.frequencyBandsByRanges[shape.range].count == 0){
             this.rangesWithoutShapes.add(shape.range);
         }
         this.frequencyBandsByRanges[shape.range].dieBand.widen(false);
@@ -173,6 +174,7 @@ function Art(config, ranges) {
             this.frequencyBandsByRanges[shape.range].splitBand.adjustFrames(true);
         }
     };
+
     this.encoderSwitch = function(encoder_switch_value) {
         console.log("TODO: encoder switch", encoder_switch_value);
     };
@@ -188,6 +190,9 @@ function Art(config, ranges) {
         if (this.shapes.length > 0) {
             let shape = this.shapes.splice(i, 1);
             this.frequencyBandsByRanges[shape.range].count--;
+            if(this.frequencyBandsByRanges[shape.range].count == 0){
+                this.rangesWithoutShapes.add(shape.range);
+            }
         }
     };
 
@@ -207,8 +212,6 @@ function Art(config, ranges) {
         let rangeAndBand = random(chooseableRanges);
         let range = rangeAndBand[0];
         let bands = rangeAndBand[1];
-
-
 
         let center = point === undefined ? randomPoint() : point;
         let s =
