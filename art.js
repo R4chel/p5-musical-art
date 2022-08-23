@@ -90,7 +90,7 @@ function Art(config, ranges) {
                     deadList.push(i);
                     break;
                 case "SPLIT":
-                    console.log("SPLIT", this.shapes[i].range, this.shapes[i].split);
+                    console.log("SPLIT", this.shapes[i].range, this.shapes[i].splitBand);
                     splitList.push(i);
                     break;
                 default:

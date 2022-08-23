@@ -186,7 +186,7 @@ function Shape({
     this.resetFrequencyBands = function() {
         this.splitBand.reset();
         this.dieBand.reset();
-    }
+    };
 
 }
 
