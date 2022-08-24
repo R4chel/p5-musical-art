@@ -160,14 +160,14 @@ function Art(config, ranges) {
         // lots of parameter tweaking to do here
         // TODO add something about amount of time since last shape added 
         if (amplitude / avgSound > 1.05 && this.rangesWithoutShapes.size > 0) {
-            if (random() < 0.25*this.rangesWithoutShapes.size* amplitude /avgSound) {
+            if (random() < 0.25 * this.rangesWithoutShapes.size * amplitude / avgSound) {
 
                 let range = random([...this.rangesWithoutShapes.keys()]);
                 console.log("Adding Shape", range);
                 this.addShape(undefined, range);
 
             } else {
-                console.log("not this time")
+                console.log("not this time");
             }
         }
     };
@@ -198,9 +198,10 @@ function Art(config, ranges) {
     };
 
     this.removeShape = function(i) {
-        i = i === undefined ? Math.floor(Math.random() * this.shapes.length) : i;
+        i = i === undefined ? floor(random() * this.shapes.length) : i;
         if (this.shapes.length > 0) {
             let shape = this.shapes.splice(i, 1)[0];
+            console.log("removed", shape);
             this.frequencyBandsByRanges[shape.range].count--;
             if (this.frequencyBandsByRanges[shape.range].count == 0) {
                 this.rangesWithoutShapes.add(shape.range);
