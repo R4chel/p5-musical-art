@@ -12,7 +12,7 @@ let canvasSize;
 // canvasSize = 1000;
 let calibration = [];
 
-let configurable = false;
+let configurable = true;
 
 function setup() {
     config = new Config({
@@ -32,6 +32,7 @@ function setup() {
     if (configurable) {
 
         makeSlider("timeWindow", 1, 100, 5, config.getTimeWindow, config.setTimeWindow);
+        makeCheckbox("normalizeSound", config.getNormalizeSound, config.setNormalizeSound);
     }
 
     mic = new p5.AudioIn();
@@ -122,6 +123,7 @@ function draw() {
         frequencies: frequencies,
         avgSound: avgSound,
         safari: !nonZeroAmplitude,
+        normalizeSound : config.normalizeSound,
     });
 
     art.update({
@@ -202,4 +204,19 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     d.child(slider);
     d.child(textBox);
     return slider;
+}
+
+function makeCheckbox(name, getter, setter) {
+    let d = createDiv();
+
+    let label = createElement("label");
+    let checkbox = createCheckbox(name, getter.apply(config));
+    checkbox.changed(function () {
+        setter.apply(config, [checkbox.checked()]);
+        redraw();
+    })
+
+    d.child(label);
+    d.child(checkbox);
+    return checkbox
 }
