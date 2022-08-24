@@ -19,7 +19,6 @@ function Shape({
     this.default_shape_kind = default_shape;
     this.range = range;
     this.waveMultiplier = floor(random(1, 6));
-    // bands should be specified by range
     this.splitBand = splitBand;
     this.dieBand = dieBand;
     this.c1 = color(floor(random(256)), floor(random(256)), floor(random(256)));
@@ -175,7 +174,6 @@ function Shape({
         }
 
         if (this.splitBand.update(normalizedFrequency)) {
-            console.log(this.range, normalizedFrequency, this.splitBand);
             return "SPLIT";
         }
         if (this.dieBand.update(normalizedFrequency)) {

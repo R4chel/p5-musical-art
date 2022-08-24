@@ -154,10 +154,9 @@ function soundAnalysis(soundwave) {
 
     let squares = 0;
     let count = 0;
-    // There may be an off by one error here
 
     for (let i = 1; i <= min(avgs.length, config.timeWindow); i++) {
-        squares += avgs[avgs.length - i] * 2;
+        squares += avgs[avgs.length - i] ** 2;
         count++;
     }
     let runningAvg = Math.sqrt(squares / count);
