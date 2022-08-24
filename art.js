@@ -177,8 +177,8 @@ function Art(config, ranges) {
         if (this.frequencyBandsByRanges[shape.range].count == 0) {
             this.rangesWithoutShapes.add(shape.range);
         }
-        this.frequencyBandsByRanges[shape.range].dieBand.widen(false);
-        this.frequencyBandsByRanges[shape.range].dieBand.adjustFrames(random() < 0.75);
+        this.frequencyBandsByRanges[shape.range].dieBand.narrow(false);
+        this.frequencyBandsByRanges[shape.range].dieBand.adjustFrames(random() < 0.25);
         if (random() < 0.5) {
             this.frequencyBandsByRanges[shape.range].splitBand.widen(true);
         }
