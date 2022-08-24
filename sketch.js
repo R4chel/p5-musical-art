@@ -11,6 +11,8 @@ let seed;
 let canvasSize;
 // canvasSize = 1000;
 let calibration = [];
+let avgs = [];
+let peaks = [];
 
 let configurable = true;
 
@@ -92,6 +94,7 @@ function draw() {
     }
 
     let avgSound = soundAnalysis(soundwave);
+    avgSound = avgSound.toPrecision(3);
 
     // this is because currently mic.getLevel() doesn't work in safari
     if (!nonZeroAmplitude) {
@@ -124,6 +127,7 @@ function draw() {
         avgSound: avgSound,
         safari: !nonZeroAmplitude,
         normalizeSound : config.normalizeSound,
+        maxSound : peaks[peaks.length-1],
     });
 
     art.update({
@@ -133,8 +137,6 @@ function draw() {
     });
 }
 
-let avgs = [];
-let peaks = [];
 
 function soundAnalysis(soundwave) {
     let sampleMax = 0;

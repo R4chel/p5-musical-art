@@ -43,6 +43,7 @@ function Art(config, ranges) {
         frequencies,
         safari,
         normalizeSound,
+        maxSound,
     }) {
         if (this.drawBackground) {
             background(this.background);
@@ -54,6 +55,7 @@ function Art(config, ranges) {
         rect(0, 0, width, height);
         let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
         let normalizedSound = normalizeSound ? soundwave.map((x) => x / avgSound) : soundwave;
+        // let normalizedSound = normalizeSound ? soundwave.map((x) => x / maxSound) : soundwave;
 
         // this.maxes.push(max(normalizedSound));
         let amplitudeModifier = safari ? 10 : 100;
