@@ -1,10 +1,9 @@
-const NUM_COLOR_MODES = 8;
 const MAX_NUM_SHAPES = 20;
 const MAX_SHAPES_PER_RANGE = 5;
 
 function Art(config, ranges) {
     this.config = config;
-    this.fillModes = ["frequency", "frequencyPalette", "frequencyRandomPalette", "filled", "noFill", "whiteFill", "randomOpacity", ];
+    this.coloring = new Coloring();
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
     this.min_radius = floor(max(width, height) / 20);
@@ -12,7 +11,6 @@ function Art(config, ranges) {
     this.colorIndex = 0;
     this.numPoints = 50;
     this.noise = 5;
-    this.fillModeIndex = 0;
     this.shapeModeIndex = 0;
     this.shapeOverride = false;
     this.move = true;
@@ -46,7 +44,7 @@ function Art(config, ranges) {
         maxSound,
     }) {
         if (this.drawBackground) {
-            background(this.background);
+            background(this.coloring.background);
         }
         noStroke();
 
@@ -61,7 +59,7 @@ function Art(config, ranges) {
         let amplitudeModifier = safari ? 10 : 100;
         for (let i = 0; i < this.shapes.length; i++) {
             this.shapes[i].draw({
-                fillMode: this.fillModes[this.fillModeIndex],
+                fillMode: this.coloring.fillMode(),
                 soundwave: normalizedSound,
                 amplitude: min(amplitude * amplitudeModifier, 1.0),
                 min_radius: this.min_radius,
@@ -116,7 +114,7 @@ function Art(config, ranges) {
                         noise: s.noise,
                         default_shape: s.default_shape_kind,
                         range: s.range,
-                        strokeColor: this.randomColor(),
+                        strokeColor: this.coloring.randomColor(),
                         dieBand: new FrequencyBand({
                             minValue: s.dieBand.minValue,
                             maxValue: s.dieBand.maxValue,
@@ -240,7 +238,7 @@ function Art(config, ranges) {
             new Shape({
                 center: center,
                 radius: round(random(this.min_radius, this.max_radius)),
-                strokeColor: this.randomColor(),
+                strokeColor: this.coloring.randomColor(),
                 numPoints: this.numPoints,
                 noise: this.noise,
                 default_shape: random(this.shapeModes),
@@ -270,16 +268,15 @@ function Art(config, ranges) {
         this.shapes = [];
         this.min_radius = 5;
         this.max_radius = 100;
-        this.colorIndex = floor(random(NUM_COLOR_MODES));
         this.numPoints = 50;
         this.noise = 5;
         this.fillModeIndex = 0;
         this.shapeModeIndex = 0;
         this.shapeOverride = false;
         this.move = true;
-        this.background = color(floor(random(255)));
         this.drawBackground = false;
         this.rotate = true;
+        this.coloring.reset(); 
 
         background(this.background);
     }
@@ -369,53 +366,6 @@ function Art(config, ranges) {
 
     }
 
-    this.randomColor = function() {
-
-        let vals = [...Array(3)].map(() => random(255));
-        vals.sort();
-        switch (this.colorIndex) {
-            case 0:
-                return {
-                    r: vals[0], g: vals[1], b: vals[2]
-                };
-            case 1:
-                return {
-                    r: vals[0], g: vals[2], b: vals[1]
-                };
-            case 2:
-                return {
-                    r: vals[1], g: vals[0], b: vals[2]
-                };
-            case 3:
-                return {
-                    r: vals[1], g: vals[2], b: vals[1]
-                };
-            case 4:
-                return {
-                    r: vals[2], g: vals[0], b: vals[1]
-                };
-            case 5:
-                return {
-                    r: vals[2], g: vals[1], b: vals[0]
-                };
-            case 6:
-                return {
-                    r: vals[1], g: vals[1], b: vals[1]
-                };
-            case 7:
-                // IF YOU ADD THINGS HERE UPDATE NUM COLOR MODES 
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-
-            default:
-                return {
-                    r: random(255), g: random(255), b: random(255)
-                };
-
-        }
-    }
 }
 
 function weightedChoice(weightedList) {
