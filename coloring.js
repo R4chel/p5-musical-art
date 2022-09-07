@@ -12,7 +12,8 @@ function Coloring() {
     this.fillMode = function (){
         return FILL_MODES[this._fillModeIndex];
         
-    }
+    };
+
     this.randomColor = function() {
 
         let vals = [...Array(3)].map(() => random(255));
@@ -60,4 +61,16 @@ function Coloring() {
 
         }
     };
+
+    this.createFillModeSelector = function(){
+        let select = createSelect(false);
+        for (let i = 0; i < FILL_MODES.length; i++) {
+            select.option(FILL_MODES[i], i);
+        }
+        // TODO confirm that this works as expected
+        select.selected(this.fillModeIndex);
+        select.input(function () {
+            this.fillModeIndex = FILL_MODES[select.value()];
+        });
+    }
 }

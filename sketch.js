@@ -35,6 +35,9 @@ function setup() {
 
         makeSlider("timeWindow", 1, 100, 5, config.getTimeWindow, config.setTimeWindow);
         makeCheckbox("normalizeSound", config.getNormalizeSound, config.setNormalizeSound);
+        art.coloring.createFillModeSelector();
+
+
     }
 
     mic = new p5.AudioIn();
