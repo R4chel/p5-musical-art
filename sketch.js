@@ -48,6 +48,7 @@ function setup() {
         fillModeSelector.input(function () {
             art.coloring.setFillModeIndex(fillModeSelector.value());
         });
+        art.coloring.fillModeSelector = fillModeSelector;
 
 
     }
