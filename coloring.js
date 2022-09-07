@@ -2,20 +2,15 @@ const NUM_COLOR_MODES = 8;
 const FILL_MODES = ["frequency", "frequencyPalette", "frequencyRandomPalette", "filled", "noFill", "whiteFill", "randomOpacity", ];
 
 function Coloring() {
-    this.fillModeSelector;
     this.reset = function (){
         this.colorIndex = floor(random(NUM_COLOR_MODES));
         this.background = color(floor(random(255)));
         this._fillModeIndex = 0;
-        if(this.fillModeSelector != undefined){
-            this.fillModeSelector.selected(FILL_MODES[this._fillModeIndex]);
-        }
     };
     this.reset();
 
     this.fillMode = function (){
         return FILL_MODES[this._fillModeIndex];
-        
     };
 
     this.randomColor = function() {
@@ -91,4 +86,9 @@ function Coloring() {
         }
 
     };
+    this.setFillModeIndex = function(index){
+        this._fillModeIndex= index
+    };
+
+    this.fillModes = FILL_MODES;
 }

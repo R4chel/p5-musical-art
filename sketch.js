@@ -35,7 +35,19 @@ function setup() {
 
         makeSlider("timeWindow", 1, 100, 5, config.getTimeWindow, config.setTimeWindow);
         makeCheckbox("normalizeSound", config.getNormalizeSound, config.setNormalizeSound);
-        art.coloring.createFillModeSelector();
+
+
+        // This is here rather than being in coloring or a separate function due to a bug related to calling select not working.
+        let fillModeSelector = createSelect(false);
+
+        let fillModes= art.coloring.fillModes;
+        for (let i = 0; i < fillModes.length; i++) {
+            fillModeSelector.option(fillModes[i], i);
+        }
+        fillModeSelector.selected(art.coloring.fillMode());
+        fillModeSelector.input(function () {
+            art.coloring.setFillModeIndex(fillModeSelector.value());
+        });
 
 
     }
