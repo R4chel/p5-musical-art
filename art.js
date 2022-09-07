@@ -270,7 +270,6 @@ function Art(config, ranges) {
         this.max_radius = 100;
         this.numPoints = 50;
         this.noise = 5;
-        this.fillModeIndex = 0;
         this.shapeModeIndex = 0;
         this.shapeOverride = false;
         this.move = true;
@@ -298,7 +297,7 @@ function Art(config, ranges) {
                 this.addShape();
                 break;
             case 1:
-                this.fillModeIndex = (this.fillModeIndex + 1) % this.fillModes.length;
+            this.coloring.changeFillMode();
                 break;
 
             case 2:

@@ -2,10 +2,14 @@ const NUM_COLOR_MODES = 8;
 const FILL_MODES = ["frequency", "frequencyPalette", "frequencyRandomPalette", "filled", "noFill", "whiteFill", "randomOpacity", ];
 
 function Coloring() {
+    this.fillModeSelector;
     this.reset = function (){
         this.colorIndex = floor(random(NUM_COLOR_MODES));
         this.background = color(floor(random(255)));
-        this.fillModeIndex = 0;
+        this._fillModeIndex = 0;
+        if(this.fillModeSelector != undefined){
+            this.fillModeSelector.selected(FILL_MODES[this._fillModeIndex]);
+        }
     };
     this.reset();
 
@@ -68,9 +72,23 @@ function Coloring() {
             select.option(FILL_MODES[i], i);
         }
         // TODO confirm that this works as expected
-        select.selected(this.fillModeIndex);
+        select.selected(FILL_MODES[this._fillModeIndex]);
         select.input(function () {
-            this.fillModeIndex = FILL_MODES[select.value()];
+            this._fillModeIndex = select.value();
         });
-    }
+        this.fillModeSelector = select;
+        this.onFillModeIndexChange = function(value) {
+            select.selected(value);
+        };
+        return select;
+    };
+
+    this.changeFillMode = function(){
+        this._fillModeIndex = (this._fillModeIndex + 1) % FILL_MODES.length;
+        this.onFillModeIndexChange(FILL_MODES[this._fillModeIndex]);
+        if(this.fillModeSelector != undefined){
+            this.fillModeSelector.selected(FILL_MODES[this._fillModeIndex]);
+        }
+
+    };
 }
