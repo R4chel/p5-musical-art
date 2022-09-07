@@ -7,6 +7,9 @@ function Coloring() {
         this.colorIndex = floor(random(NUM_COLOR_MODES));
         this.background = color(floor(random(255)));
         this._fillModeIndex = 0;
+        if(this.fillModeSelector != undefined){
+            this.fillModeSelector.value(this._fillModeIndex);
+        }
     };
     this.reset();
 
@@ -15,7 +18,6 @@ function Coloring() {
     };
 
     this.randomColor = function() {
-
         let vals = [...Array(3)].map(() => random(255));
         vals.sort();
         switch (this.colorIndex) {
@@ -69,26 +71,18 @@ function Coloring() {
         }
         // TODO confirm that this works as expected
         select.selected(FILL_MODES[this._fillModeIndex]);
-        select.input(function () {
-            this._fillModeIndex = select.value();
-        });
+        select.input(() => this._fillModeIndex =select.value());
         this.fillModeSelector = select;
-        this.onFillModeIndexChange = function(value) {
-            select.selected(value);
-        };
         return select;
     };
 
-    this.changeFillMode = function(){
-        this._fillModeIndex = (this._fillModeIndex + 1) % FILL_MODES.length;
+    this.onFillModeChange = function(){
         if(this.fillModeSelector != undefined){
             this.fillModeSelector.value(this._fillModeIndex);
         }
-
     };
-    this.setFillModeIndex = function(index){
-        this._fillModeIndex= index;
+    this.changeFillMode = function(){
+        this._fillModeIndex = (this._fillModeIndex + 1) % FILL_MODES.length;
+        this.onFillModeChange();
     };
-
-    this.fillModes = FILL_MODES;
 }
