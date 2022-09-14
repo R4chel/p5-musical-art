@@ -19,16 +19,19 @@ function ShapeConfig(){
         // TODO confirm that this works as expected
         select.selected(SHAPE_MODES[this._shapeModeIndex]);
         select.input(() => this.globalModeIndex = select.value());
+        if(this.globalMode){
+            select.attribute('disabled', '');
+        }
         this.shapeModeSelector = select;
         
         checkbox.changed(function () {
             this.globalMode = checkbox.checked();
             if (this.checked()) {
-                // Re-enable the button
-                this.shapeModeSelector.removeAttribute('disabled');
+                // Disable the selector
+                select.attribute('disabled', '');
             } else {
-                // Disable the button
-                this.shapeModeSelector.attribute('disabled', '');
+                // Re-enable the selector
+                select.removeAttribute('disabled');
             } 
             redraw();
         });
@@ -70,7 +73,7 @@ function ShapeConfig(){
 
     this.changeShapeModeIndex = function(){
         this.setGlobalMode(true);
-        this._shapeModeIndex = (this._shapeModeIndex + 1) % this.shapeModes.length;
+        this._shapeModeIndex = (this._shapeModeIndex + 1) % SHAPE_MODES.length;
         if(this.shapeModeSelector != undefined){
             this.shapeModeSelector.value(this._shapeModeIndex);
         }
