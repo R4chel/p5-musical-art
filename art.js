@@ -4,15 +4,13 @@ const MAX_SHAPES_PER_RANGE = 5;
 function Art(config, ranges) {
     this.config = config;
     this.coloring = new Coloring();
-    this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
+    this.shapeConfig = new ShapeConfig();
     this.shapes = [];
     this.min_radius = floor(max(width, height) / 20);
     this.max_radius = floor(max(width, height) / 5);
     this.colorIndex = 0;
     this.numPoints = 50;
     this.noise = 5;
-    this.shapeModeIndex = 0;
-    this.shapeOverride = false;
     this.move = true;
     this.background = color(255);
     this.drawBackground = false;
@@ -51,7 +49,7 @@ function Art(config, ranges) {
         fill(color(0, 0, 0, 3));
         // fill(color(255, 255, 255, 3));
         rect(0, 0, width, height);
-        let shapeKind = this.shapeOverride ? this.shapeModes[this.shapeModeIndex] : undefined;
+        let shapeKind = this.shapeConfig.getGlobalShapeKind();
         let normalizedSound = normalizeSound ? soundwave.map((x) => x / avgSound) : soundwave;
         // let normalizedSound = normalizeSound ? soundwave.map((x) => x / maxSound) : soundwave;
 
@@ -241,7 +239,7 @@ function Art(config, ranges) {
                 strokeColor: this.coloring.randomColor(),
                 numPoints: this.numPoints,
                 noise: this.noise,
-                default_shape: random(this.shapeModes),
+                default_shape: this.shapeConfig.randomKind(),
                 range: range,
                 dieBand: new FrequencyBand({
                     minValue: bands.dieBand.minValue,
@@ -270,12 +268,11 @@ function Art(config, ranges) {
         this.max_radius = 100;
         this.numPoints = 50;
         this.noise = 5;
-        this.shapeModeIndex = 0;
-        this.shapeOverride = false;
         this.move = true;
         this.drawBackground = false;
         this.rotate = true;
         this.coloring.reset(); 
+        this.shapeConfig.reset();
 
         background(this.background);
     }
@@ -308,11 +305,10 @@ function Art(config, ranges) {
                 }
                 break;
             case 3:
-                this.shapeOverride = true;
-                this.shapeModeIndex = (this.shapeModeIndex + 1) % this.shapeModes.length;
+            this.shapeConfig.changeShapeModeIndex();
                 break;
             case 4:
-                this.shapeOverride = !this.shapeOverride;
+            this.shapeConfig.toggleGlobalMode();
                 break;
             case 5:
                 this.min_radius += floor(random(5));
