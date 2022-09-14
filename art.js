@@ -348,7 +348,6 @@ function Art(config, ranges) {
         }
         if (this.shapes.length == 0 && key != 11) {
             this.colorIndex = key;
-            this.shapeModeIndex = floor(random(this.shapeModes.length));
             if (key > 6) {
                 this.min_radius += key;
                 this.max_radius += key;

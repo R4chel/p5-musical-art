@@ -17,9 +17,9 @@ function ShapeConfig(){
             select.option(SHAPE_MODES[i], i);
         }
         // TODO confirm that this works as expected
-        select.selected(SHAPE_MODES[this._shapeModeIndex]);
-        select.input(() => this.globalModeIndex = select.value());
-        if(this.globalMode){
+        select.selected(SHAPE_MODES[this._globalShapeIndex]);
+        select.input(() => this._globalShapeIndex= select.value());
+        if(!this.globalMode){
             select.attribute('disabled', '');
         }
         this.shapeModeSelector = select;
@@ -27,11 +27,11 @@ function ShapeConfig(){
         checkbox.changed(function () {
             this.globalMode = checkbox.checked();
             if (this.checked()) {
-                // Disable the selector
-                select.attribute('disabled', '');
-            } else {
                 // Re-enable the selector
                 select.removeAttribute('disabled');
+            } else {
+                // Disable the selector
+                select.attribute('disabled', '');
             } 
             redraw();
         });
@@ -44,16 +44,16 @@ function ShapeConfig(){
 
     this.onShapeModeChange = function(){
         if(this.shapeModeSelector != undefined){
-            this.shapeModeSelector.value(this._shapeModeIndex);
+            this.shapeModeSelector.value(this._globalShapeIndex);
         }
     };
     this.changeShapeMode = function(){
-        this._shapeModeIndex = (this._shapeModeIndex + 1) % SHAPE_MODES.length;
+        this._globalShapeIndex = (this._globalShapeIndex + 1) % SHAPE_MODES.length;
         this.onShapeModeChange();
     };
 
     this.getGlobalShapeKind = function(){
-       return this.globalMode ? SHAPE_MODES[this._shapeModeIndex] : undefined;
+       return this.globalMode ? SHAPE_MODES[this._globalShapeIndex] : undefined;
     };
 
     this.randomKind = function(){
@@ -73,9 +73,9 @@ function ShapeConfig(){
 
     this.changeShapeModeIndex = function(){
         this.setGlobalMode(true);
-        this._shapeModeIndex = (this._shapeModeIndex + 1) % SHAPE_MODES.length;
+        this._globalShapeIndex = (this._globalShapeIndex + 1) % SHAPE_MODES.length;
         if(this.shapeModeSelector != undefined){
-            this.shapeModeSelector.value(this._shapeModeIndex);
+            this.shapeModeSelector.value(this._globalShapeIndex);
         }
     }
 }
