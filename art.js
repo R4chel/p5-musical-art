@@ -6,8 +6,6 @@ function Art(config, ranges) {
     this.coloring = new Coloring();
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
-    this.min_radius = floor(min(width, height) / 20);
-    this.max_radius = floor(min(width, height) / 5);
     this.colorIndex = 0;
     this.numPoints = 50;
     this.noise = 5;
@@ -266,8 +264,8 @@ function Art(config, ranges) {
 
     this.reset = function() {
         this.shapes = [];
-        this.min_radius = floor(min(width, height) / 20);
-        this.max_radius = floor(min(width, height) / 5);
+        this.min_radius = floor(min(width, height) / random(75,125));
+        this.max_radius = floor(min(width, height) / random(25, 50));
         this.numPoints = 50;
         this.noise = 5;
         this.shapeModeIndex = 0;
