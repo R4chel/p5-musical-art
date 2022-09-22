@@ -6,8 +6,8 @@ function Art(config, ranges) {
     this.coloring = new Coloring();
     this.shapeModes = ["circle", "heart", "square", "rose", "inverseRose", "star"];
     this.shapes = [];
-    this.min_radius = floor(max(width, height) / 20);
-    this.max_radius = floor(max(width, height) / 5);
+    this.min_radius = floor(min(width, height) / 20);
+    this.max_radius = floor(min(width, height) / 5);
     this.colorIndex = 0;
     this.numPoints = 50;
     this.noise = 5;
@@ -266,8 +266,8 @@ function Art(config, ranges) {
 
     this.reset = function() {
         this.shapes = [];
-        this.min_radius = 5;
-        this.max_radius = 100;
+        this.min_radius = floor(min(width, height) / 20);
+        this.max_radius = floor(min(width, height) / 5);
         this.numPoints = 50;
         this.noise = 5;
         this.shapeModeIndex = 0;
@@ -278,7 +278,7 @@ function Art(config, ranges) {
         this.coloring.reset(); 
 
         background(this.background);
-    }
+    };
 
     this.validateRadii = function() {
         if (this.min_radius <= 0) {
